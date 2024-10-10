@@ -1,9 +1,9 @@
 import ExpenseSchema from '../models/ExpenseModel.js';
 
+// Add expense
 export const addExpense = async (req, res) => {
-    const { title, amount, category, description, date } = req.body;
+    const { title, amount, category, description, date, userId } = req.body; // Add userId here
 
-    // Log the entire request body for debugging
     console.log("Request body:", req.body);
 
     // Validations
@@ -11,43 +11,45 @@ export const addExpense = async (req, res) => {
         return res.status(400).json({ message: 'All fields are required!' });
     }
 
-    // Convert amount to a number
     const parsedAmount = parseFloat(amount);
-
-    // Validate amount is a number and greater than 0
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
         return res.status(400).json({ message: 'Amount must be a positive number!' });
     }
 
     const expense = new ExpenseSchema({
         title,
-        amount: parsedAmount, // Store the parsed amount
+        amount: parsedAmount,
         category,
         description,
         date,
+        userId // Store the userId in the expense
     });
 
     try {
         await expense.save();
         res.status(200).json({ message: 'Expense Added' });
     } catch (error) {
-        console.error("Error saving expense:", error); // Log the error for debugging
+        console.error("Error saving expense:", error);
         res.status(500).json({ message: 'Server Error' });
     }
 
     console.log(expense);
 };
 
-export const getExpense = async (req, res) => {
+// Get all expenses
+export const getExpenses = async (req, res) => {
+    const userId = req.user.id; // Ensure this is properly set
+
     try {
-        const expenses = await ExpenseSchema.find().sort({ createdAt: -1 });
+        const expenses = await ExpenseSchema.find({ userId }).sort({ createdAt: -1 });
         res.status(200).json(expenses);
     } catch (error) {
-        console.error("Error fetching expenses:", error); // Log the error for debugging
+        console.error("Error fetching expenses:", error);
         res.status(500).json({ message: 'Server Error' });
     }
 };
 
+// Delete an expense
 export const deleteExpense = async (req, res) => {
     const { id } = req.params;
 
@@ -58,7 +60,9 @@ export const deleteExpense = async (req, res) => {
         }
         res.status(200).json({ message: 'Expense Deleted' });
     } catch (error) {
-        console.error("Error deleting expense:", error); // Log the error for debugging
+        console.error("Error deleting expense:", error);
         res.status(500).json({ message: 'Server Error' });
     }
 };
+
+// Check if you really need getExpense here; if not needed, just remove it.
