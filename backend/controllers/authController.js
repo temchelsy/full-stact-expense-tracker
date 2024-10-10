@@ -1,43 +1,53 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import User from "../models/user.js";
-import { validationResult } from "express-validator";
-import nodemailer from "nodemailer";
-import dotenv from "dotenv";
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import User from '../models/user.js';
 
-dotenv.config();
+// Utility functions
+const hashPassword = async (userValue) => {
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(userValue, salt);
+  return hashedPassword;
+};
 
-const register = async (req, res) => {
-  console.log("Registering user...");
-
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    console.log("Validation errors:", errors.array());
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const { firstName, lastName, email, password } = req.body;
-  console.log("First name:", firstName, "Last name:", lastName, "Email:", email, "Password:", password);
-
-  if (!firstName || !lastName || !email || !password) {
-    return res.status(400).json({ message: "Please fill in all required fields." });
-  }
-
-  if (password.length < 6) {
-    return res.status(400).json({ message: "Password must be at least 6 characters long." });
-  }
-
+const comparePassword = async (userPassword, password) => {
   try {
-    console.log("Checking if user already exists...");
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "An account with this email already exists." });
+    return await bcrypt.compare(userPassword, password);
+  } catch (error) {
+    console.error("Error comparing passwords:", error);
+    return false;
+  }
+};
+
+const createJWT = (id) => {
+  return jwt.sign(
+    { userId: id },
+    process.env.JWT_SECRET,
+    { expiresIn: "1d" }
+  );
+};
+
+// Controllers
+export const register = async (req, res) => {
+  try {
+    const { firstName, lastName, email, password } = req.body;
+
+    if (!(firstName && lastName && email && password)) {
+      return res.status(400).json({
+        status: "failed",
+        message: "Provide Required Fields!",
+      });
     }
 
-    console.log("Hashing password...");
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({
+        status: "failed",
+        message: "Email Address already exists. Try Login",
+      });
+    }
 
-    console.log("Creating user...");
+    const hashedPassword = await hashPassword(password);
+
     const user = await User.create({
       firstName,
       lastName,
@@ -45,135 +55,90 @@ const register = async (req, res) => {
       password: hashedPassword,
     });
 
-    console.log("Generating JWT token...");
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = createJWT(user._id);
 
-    console.log("User registered successfully, returning response...");
     res.status(201).json({
+      status: "success",
+      message: "User account created successfully",
+      user: {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+      },
       token,
-      message: "User registered successfully.",
     });
   } catch (error) {
     console.error("Error registering user:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ status: "failed", message: "Internal server error" });
   }
 };
 
-const login = async (req, res) => {
-  const { email, password } = req.body;
-
+export const login = async (req, res) => {
   try {
-    console.log("Finding user with email...");
+    const { email, password } = req.body;
+
+    if (!(email && password)) {
+      return res.status(400).json({
+        status: "failed",
+        message: "Provide Required Fields!",
+      });
+    }
+
     const user = await User.findOne({ email });
-
     if (!user) {
-      console.log("User not found");
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({
+        status: "failed",
+        message: "Invalid email or password.",
+      });
     }
 
-    console.log("Checking password...");
-    const isMatch = await bcrypt.compare(password, user.password);
-
+    const isMatch = await comparePassword(password, user.password);
     if (!isMatch) {
-      console.log("Invalid credentials");
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(404).json({
+        status: "failed",
+        message: "Invalid email or password",
+      });
     }
 
-    console.log("Generating JWT token...");
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "30d",
-    });
+    const token = createJWT(user._id);
 
-    console.log("Login successful, returning response...");
     res.status(200).json({
-      message: "Login successful",
+      status: "success",
+      message: "Login successfully",
+      user: {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+      },
       token,
     });
   } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ message: "Login error", error });
+    console.error("Error logging in user:", error);
+    res.status(500).json({ status: "failed", message: error.message });
   }
 };
 
-// Forgot Password - Send Reset Code
-const forgotPassword = async (req, res) => {
-  const { email } = req.body;
-
+export const getCurrentUser = async (req, res) => {
   try {
-    console.log("Finding user with email...");
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    const userId = req.user._id; // This should be populated from your middleware
 
-    console.log("Generating reset code...");
-    const resetCode = Math.floor(100000 + Math.random() * 900000);
-    const resetCodeExpiresAt = new Date(Date.now() + 3600000); // 1 hour expiry
-
-    user.resetCode = resetCode;
-    user.resetCodeExpiresAt = resetCodeExpiresAt;
-    await user.save();
-
-    console.log("Sending email...");
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
-
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: user.email,
-      subject: "Password Reset Code",
-      html: `<p>Your password reset code is: <strong>${resetCode}</strong></p>
-             <p>This code will expire in 1 hour.</p>`,
-    };
-
-    await transporter.sendMail(mailOptions);
-
-    console.log("Reset code sent, returning response...");
-    res.status(200).json({ message: "Reset code sent to your email." });
-  } catch (error) {
-    console.error("Error during forgot password:", error);
-    res.status(500).json({ message: "Error sending reset code" });
-  }
-};
-
-// Reset Password
-const resetPassword = async (req, res) => {
-  const { resetCode, newPassword, confirmNewPassword } = req.body;
-
-  if (newPassword !== confirmNewPassword) {
-    return res.status(400).json({ message: "Passwords do not match" });
-  }
-
-  try {
-    console.log("Finding user with reset code...");
-    const user = await User.findOne({
-      resetCode,
-      resetCodeExpiresAt: { $gt: new Date() },
-    });
+    const user = await User.findById(userId).select('id firstName lastName email');
 
     if (!user) {
-      return res.status(404).json({ message: "Invalid or expired reset code" });
+      return res.status(404).json({
+        status: "failed",
+        message: "User not found.",
+      });
     }
 
-    console.log("Resetting password...");
-    user.password = await bcrypt.hash(newPassword, 10);
-    user.resetCode = null;
-    user.resetCodeExpiresAt = null;
-    await user.save();
-
-    console.log("Password reset successfully...");
-    res.status(200).json({ message: "Password has been reset successfully." });
+    res.status(200).json({
+      status: "success",
+      user,
+    });
   } catch (error) {
-    console.error("Error resetting password:", error);
-    res.status(500).json({ message: "Error resetting password" });
+    console.error("Error fetching current user:", error);
+    res.status(500).json({ status: "failed", message: error.message });
   }
 };
-
-export { register, login, forgotPassword, resetPassword };

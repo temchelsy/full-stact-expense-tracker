@@ -1,12 +1,14 @@
-import express from "express";
-import { register, login, forgotPassword, resetPassword } from "../controllers/authController.js";
-import { authenticateUser } from "../middleware/authMiddleware.js";
+import express from 'express';
+import authenticateUser from '../middleware/authMiddleware.js';
+import { getCurrentUser, register, login} from '../controllers/authController.js';
 
 const router = express.Router();
 
-router.post("/register", authenticateUser, register);
-router.post("/login", authenticateUser, login);
-router.post("/forgot-password", authenticateUser, forgotPassword);  // For requesting reset code
-router.post("/reset-password", authenticateUser, resetPassword);    // For resetting the password
+// Public routes
+router.post('/register', register);
+router.post('/login', login);
+
+// Protected routes
+router.get('/current', authenticateUser, getCurrentUser);
 
 export default router;
