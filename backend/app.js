@@ -13,6 +13,9 @@ const PORT = process.env.PORT;
 app.use(express.json());
 app.use(cors());
 
+// Middleware for Authentication
+import authenticateUser from './middleware/authMiddleware.js';
+
 // Load Routes
 const loadRoutes = async () => {
     const routes = readdirSync('./routes');
