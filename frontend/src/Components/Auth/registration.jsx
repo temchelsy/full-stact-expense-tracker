@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import './registration.css';
 
-export const Registration = (props) => {
+export const Registration = ({ onAuthenticate, onFormSwitch }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -10,7 +10,6 @@ export const Registration = (props) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
-    // Function to validate password strength
     const validatePassword = (password) => {
         if (password.length < 8) {
             return 'Password must be at least 8 characters long.';
@@ -32,7 +31,6 @@ export const Registration = (props) => {
         setErrorMessage('');
         setSuccessMessage('');
 
-        // Validate first name, last name, and password
         if (!firstName || !lastName) {
             setErrorMessage('First name and last name are required.');
             return;
@@ -44,7 +42,6 @@ export const Registration = (props) => {
             return;
         }
 
-        // Check if password and confirm password match
         if (password !== confirmPassword) {
             setErrorMessage('Passwords do not match.');
             return;
@@ -66,12 +63,10 @@ export const Registration = (props) => {
             }
 
             setSuccessMessage('Registration successful! You can now log in.');
-            
-            // Call onAuthenticate to update authentication state in App.js
-            props.onAuthenticate(true);
-            
+            onAuthenticate(true, '/'); // Change to the path you want to redirect to after successful registration
         } catch (error) {
             setErrorMessage('An error occurred. Please try again.');
+            console.error('Error:', error.message);
         }
     };
 
@@ -83,60 +78,61 @@ export const Registration = (props) => {
                 {successMessage && <p className="success-message">{successMessage}</p>}
                 <form className="register-form" onSubmit={handleSubmit}>
                     <label htmlFor="firstName">First Name</label>
-                    <input 
-                        value={firstName} 
-                        name="firstName" 
-                        onChange={(e) => setFirstName(e.target.value)} 
-                        id="firstName" 
-                        placeholder="First Name" 
-                        required 
+                    <input
+                        value={firstName}
+                        name="firstName"
+                        onChange={(e) => setFirstName(e.target.value)}
+                        id="firstName"
+                        placeholder="First Name"
+                        required
                     />
                     <label htmlFor="lastName">Last Name</label>
-                    <input 
-                        value={lastName} 
-                        name="lastName" 
-                        onChange={(e) => setLastName(e.target.value)} 
-                        id="lastName" 
-                        placeholder="Last Name" 
-                        required 
+                    <input
+                        value={lastName}
+                        name="lastName"
+                        onChange={(e) => setLastName(e.target.value)}
+                        id="lastName"
+                        placeholder="Last Name"
+                        required
                     />
                     <label htmlFor="email">Email</label>
-                    <input 
-                        value={email} 
-                        onChange={(e) => setEmail(e.target.value)} 
-                        type="email" 
-                        placeholder="youremail@gmail.com" 
-                        id="email" 
-                        name="email" 
-                        required 
+                    <input
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        type="email"
+                        placeholder="youremail@gmail.com"
+                        id="email"
+                        name="email"
+                        required
                     />
                     <label htmlFor="password">Password</label>
-                    <input 
-                        value={password} 
-                        onChange={(e) => setPassword(e.target.value)} 
-                        type="password" 
-                        placeholder="Password" 
-                        id="password" 
-                        name="password" 
-                        required 
+                    <input
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        type="password"
+                        placeholder="Password"
+                        id="password"
+                        name="password"
+                        required
                     />
                     <label htmlFor="confirmPassword">Confirm Password</label>
-                    <input 
-                        value={confirmPassword} 
-                        onChange={(e) => setConfirmPassword(e.target.value)} 
-                        type="password" 
-                        placeholder="Confirm Password" 
-                        id="confirmPassword" 
-                        name="confirmPassword" 
-                        required 
+                    <input
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        type="password"
+                        placeholder="Confirm Password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        required
                     />
                     <button type="submit">Register</button>
                 </form>
-                <button className="link-btn" onClick={() => props.onFormSwitch('login')}>
+                <button className="link-btn" onClick={() => onFormSwitch('login')}>
                     Already have an account? Login here.
                 </button>
             </div>
         </div>
     );
 };
-export default Registration
+
+export default Registration;

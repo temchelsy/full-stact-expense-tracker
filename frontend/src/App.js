@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import styled from "styled-components";
+import styled from 'styled-components';
 import bg from './img/bg.png';
 import { MainLayout } from './styles/Layouts';
 import Orb from './Components/Orb/Orb';
@@ -8,23 +8,24 @@ import Dashboard from './Components/Dashboard/Dashboard';
 import Income from './Components/Income/Income';
 import Expenses from './Components/Expenses/Expenses';
 import { useGlobalContext } from './context/globalContext';
-import { Routes, Route, Navigate } from 'react-router-dom';
-
-// Auth Pages
-import Login from './Components/Auth/login';
-import Registration from './Components/Auth/registration';
+import { Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom';
+import Authentification from './Components/Auth/auth';
 
 function App() {
     const [active, setActive] = useState(1);
-    const [isAuthenticated, setIsAuthenticated] = useState(false); 
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const navigate = useNavigate();
 
     const global = useGlobalContext();
     console.log(global);
 
     const orbMemo = useMemo(() => <Orb />, []);
 
-    const handleAuthentication = (authStatus) => {
+    const handleAuthentication = (authStatus, redirectPath) => {
         setIsAuthenticated(authStatus);
+        if (redirectPath) {
+            navigate(redirectPath);
+        }
     };
 
     return (
@@ -35,19 +36,24 @@ function App() {
                     <>
                         <Navigation active={active} setActive={setActive} />
                         <main>
+                            <nav>
+                                <ul>
+                                    <li><Link to="/">Dashboard</Link></li>
+                                    <li><Link to="/income">Income</Link></li>
+                                    <li><Link to="/expenses">Expenses</Link></li>
+                                </ul>
+                            </nav>
                             <Routes>
-                                <Route path="/" element={<Dashboard />} /> {/* Dashboard as home */}
+                                <Route path="/" element={<Dashboard />} />
                                 <Route path="/income" element={<Income />} />
                                 <Route path="/expenses" element={<Expenses />} />
-                                <Route path="*" element={<Navigate to="/" />} /> {/* Redirect to Dashboard if path not found */}
+                                <Route path="*" element={<Navigate to="/" />} />
                             </Routes>
                         </main>
                     </>
                 ) : (
                     <Routes>
-                        <Route path="/login" element={<Login onAuthenticate={handleAuthentication} />} />
-                        <Route path="/register" element={<Registration onAuthenticate={handleAuthentication} />} />
-                        <Route path="*" element={<Navigate to="/login" />} /> {/* Redirect to Login if path not found */}
+                        <Route path="*" element={<Authentification onAuthenticate={handleAuthentication} />} />
                     </Routes>
                 )}
             </MainLayout>
@@ -57,7 +63,7 @@ function App() {
 
 const AppStyled = styled.div`
     height: 100vh;
-    background-image: url(${props => props.bg});
+    background-image: url(${(props) => props.bg});
     position: relative;
     main {
         flex: 1;
@@ -68,6 +74,24 @@ const AppStyled = styled.div`
         overflow-x: hidden;
         &::-webkit-scrollbar {
             width: 0;
+        }
+    }
+    nav {
+        padding: 1rem;
+        ul {
+            display: flex;
+            justify-content: space-around;
+            list-style-type: none;
+            li {
+                a {
+                    text-decoration: none;
+                    color: #222260;
+                    font-weight: 500;
+                    &:hover {
+                        color: #007bff;
+                    }
+                }
+            }
         }
     }
 `;

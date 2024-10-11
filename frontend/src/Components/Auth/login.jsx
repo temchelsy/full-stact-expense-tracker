@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
@@ -10,7 +11,6 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
     const [successMessage, setSuccessMessage] = useState('');
     const navigate = useNavigate();
 
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMessage('');
@@ -34,16 +34,17 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                 const data = await response.json();
                 setSuccessMessage('Login successful!');
 
-                // Store email in localStorage if "Remember Me" is checked
                 if (rememberMe) {
                     localStorage.setItem('email', email);
                 } else {
                     localStorage.removeItem('email');
                 }
 
-                // Call authentication handler
-                onAuthenticate(true);  // Change the authentication status
-                navigate('/');  // Redirect to the dashboard
+                // Store the token in localStorage
+                localStorage.setItem('token', data.token);
+
+                // Call onAuthenticate to update the authentication state and redirect
+                onAuthenticate(true, '/');
             } else {
                 const errorData = await response.json();
                 setErrorMessage(errorData.error || 'Login failed. Please try again.');
@@ -54,14 +55,6 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
         }
     };
 
-    // Load stored email when the component mounts
-    useEffect(() => {
-        const storedEmail = localStorage.getItem('email');
-        if (storedEmail) {
-            setEmail(storedEmail);
-            setRememberMe(true);
-        }
-    }, []);
 
     return (
         <div className="background-container">
@@ -108,4 +101,5 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
         </div>
     );
 };
-export default Login
+
+export default Login;
