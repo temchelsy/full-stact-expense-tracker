@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import axios from 'axios';
 
 const BASE_URL = "https://full-stact-expense-tracker.onrender.com/api/v1/";
@@ -9,57 +9,74 @@ export const GlobalProvider = ({children}) => {
     const [incomes, setIncomes] = useState([]);
     const [expenses, setExpenses] = useState([]);
     const [error, setError] = useState(null);
-    const [userId, setUserId] = useState(null); // Store the user ID here
+    const [userId, setUserId] = useState(null);
+    const [token, setToken] = useState(localStorage.getItem('token'));
 
-    // Set user ID after login
-    const setCurrentUserId = (id) => {
-        setUserId(id);
-    };
+    useEffect(() => {
+        if (token) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        } else {
+            delete axios.defaults.headers.common['Authorization'];
+        }
+    }, [token]);
 
-    // Calculate total incomes
     const addIncome = async (income) => {
-        const response = await axios.post(`${BASE_URL}add-income`, { ...income, userId }) // Include user ID
-            .catch((err) => {
-                setError(err.response.data.message);
-            });
-        getIncomes();
+        try {
+            const response = await axios.post(`${BASE_URL}add-income`, income);
+            getIncomes();
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to add income');
+        }
     };
 
     const getIncomes = async () => {
-        if (!userId) return; // Ensure user ID is available
-        const response = await axios.get(`${BASE_URL}get-incomes`, { params: { userId } }); // Include user ID
-        setIncomes(response.data);
-        console.log(response.data);
+        try {
+            const response = await axios.get(`${BASE_URL}get-incomes`);
+            setIncomes(response.data);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to get incomes');
+        }
     };
 
     const deleteIncome = async (id) => {
-        const res = await axios.delete(`${BASE_URL}delete-income/${id}`);
-        getIncomes();
+        try {
+            await axios.delete(`${BASE_URL}delete-income/${id}`);
+            getIncomes();
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to delete income');
+        }
+    };
+
+    const addExpense = async (expense) => {
+        try {
+            await axios.post(`${BASE_URL}add-expense`, expense); // No userId required here
+            getExpenses(); // Refresh the expense list
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to add expense');
+        }
+    };
+    
+
+    const getExpenses = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}get-expenses`);
+            setExpenses(response.data);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to get expenses');
+        }
+    };
+
+    const deleteExpense = async (id) => {
+        try {
+            await axios.delete(`${BASE_URL}delete-expense/${id}`);
+            getExpenses();
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to delete expense');
+        }
     };
 
     const totalIncome = () => {
         return incomes.reduce((total, income) => total + income.amount, 0);
-    };
-
-    // Calculate total expenses
-    const addExpense = async (expense) => {
-        const response = await axios.post(`${BASE_URL}add-expense`, { ...expense, userId }) // Include user ID
-            .catch((err) => {
-                setError(err.response.data.message);
-            });
-        getExpenses();
-    };
-
-    const getExpenses = async () => {
-        if (!userId) return; // Ensure user ID is available
-        const response = await axios.get(`${BASE_URL}get-expenses`, { params: { userId } }); // Include user ID
-        setExpenses(response.data);
-        console.log(response.data);
-    };
-
-    const deleteExpense = async (id) => {
-        const res = await axios.delete(`${BASE_URL}delete-expense/${id}`);
-        getExpenses();
     };
 
     const totalExpenses = () => {
@@ -94,8 +111,9 @@ export const GlobalProvider = ({children}) => {
             transactionHistory,
             error,
             setError,
-            setCurrentUserId, // Expose function to set user ID
-            userId, // Provide user ID
+            userId,
+            
+            token
         }}>
             {children}
         </GlobalContext.Provider>
