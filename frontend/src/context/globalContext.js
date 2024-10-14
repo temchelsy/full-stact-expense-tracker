@@ -5,7 +5,7 @@ const BASE_URL = "https://full-stact-expense-tracker.onrender.com/api/v1/";
 
 const GlobalContext = React.createContext();
 
-export const GlobalProvider = ({children}) => {
+export const GlobalProvider = ({ children }) => {
     const [incomes, setIncomes] = useState([]);
     const [expenses, setExpenses] = useState([]);
     const [error, setError] = useState(null);
@@ -20,6 +20,7 @@ export const GlobalProvider = ({children}) => {
         }
     }, [token]);
 
+    // Functions to handle income and expense operations
     const addIncome = async (income) => {
         try {
             const response = await axios.post(`${BASE_URL}add-income`, income);
@@ -49,13 +50,12 @@ export const GlobalProvider = ({children}) => {
 
     const addExpense = async (expense) => {
         try {
-            await axios.post(`${BASE_URL}add-expense`, expense); // No userId required here
-            getExpenses(); // Refresh the expense list
+            await axios.post(`${BASE_URL}add-expense`, expense);
+            getExpenses();
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to add expense');
         }
     };
-    
 
     const getExpenses = async () => {
         try {
@@ -89,10 +89,8 @@ export const GlobalProvider = ({children}) => {
 
     const transactionHistory = () => {
         const history = [...incomes, ...expenses];
-        history.sort((a, b) => {
-            return new Date(b.createdAt) - new Date(a.createdAt);
-        });
-        return history.slice(0, 3);
+        history.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        return history.slice(0, 4);
     };
 
     return (
@@ -112,8 +110,9 @@ export const GlobalProvider = ({children}) => {
             error,
             setError,
             userId,
-            
-            token
+            setUserId, // Ensure setUserId is also provided
+            token,
+            setToken // Add setToken to the provider value
         }}>
             {children}
         </GlobalContext.Provider>
