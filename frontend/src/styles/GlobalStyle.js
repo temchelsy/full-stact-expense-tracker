@@ -46,6 +46,7 @@ export const GlobalStyle = createGlobalStyle`
         min-height: 100vh; 
         max-width:100vw
     }
+        
 
     #root {
         flex-grow: 1; /* Makes the container flexible to fill space */
