@@ -77,7 +77,7 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
             // Store lastName in localStorage for future use
             localStorage.setItem('lastName', lastName);
             
-            // Optionally, store authentication token if provided by the backend
+          
             if (data.token) {
                 localStorage.setItem('token', data.token);
             }
@@ -85,8 +85,8 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
             // Show success message and proceed to authenticate
             setSuccessMessage('Registration successful! Redirecting to login...');
             setTimeout(() => {
-                onAuthenticate(true, '/'); // Trigger the onAuthenticate callback to proceed after registration
-            }, 1500); // Redirect after 1.5 seconds
+                onAuthenticate(true, '/'); 
+            }, 1500); 
 
         } catch (error) {
             setErrorMessage('An error occurred. Please try again.');
