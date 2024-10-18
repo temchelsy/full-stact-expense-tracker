@@ -86,7 +86,7 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
             setSuccessMessage('Registration successful! Redirecting to login...');
             setTimeout(() => {
                 onAuthenticate(true, '/'); 
-            }, 1500); 
+            }, 1500); // Redirect after 1.5 seconds
 
         } catch (error) {
             setErrorMessage('An error occurred. Please try again.');

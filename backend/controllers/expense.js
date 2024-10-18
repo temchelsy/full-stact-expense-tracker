@@ -1,4 +1,4 @@
-import ExpenseSchema from '../models/ExpenseModel.js'; // Ensure this model is correct
+import ExpenseSchema from '../models/ExpenseModel.js'; 
 
 // Function to add expense
 export const addExpense = async (req, res) => {
@@ -14,14 +14,14 @@ export const addExpense = async (req, res) => {
         return res.status(400).json({ message: 'Amount must be a positive number!' });
     }
 
-    // Link this expense to the authenticated user by setting the userId
+   
     const expense = new ExpenseSchema({
         title,
         amount: parsedAmount,
         category,
         description,
         date,
-        userId: req.user.id, // Link this expense to the logged-in user
+        userId: req.user.id, 
     });
 
     try {
