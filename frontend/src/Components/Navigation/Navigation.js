@@ -1,15 +1,20 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-// import avatar from '../../img/avatar.png';
 import { signout } from '../../utils/Icons';
 import { menuItems } from '../../utils/menuItems';
 import { useGlobalContext } from '../../context/globalContext';
 
-
 function Navigation({ active, setActive }) {
     const { token, setToken, userId, setUserId } = useGlobalContext(); 
+    const [lastName, setLastName] = useState(localStorage.getItem('lastName')); // Local state for lastName
 
-    const lastName = localStorage.getItem('lastName'); 
+    // Update the state when localStorage changes
+    useEffect(() => {
+        const storedLastName = localStorage.getItem('lastName');
+        if (storedLastName) {
+            setLastName(storedLastName);
+        }
+    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -22,7 +27,6 @@ function Navigation({ active, setActive }) {
     return (
         <NavStyled>
             <div className="user-con">
-                {/* <img src={avatar} alt="" /> */}
                 <div className="text">
                     <h2>{lastName ? lastName : 'User'}</h2>
                     <p>Your Money</p>

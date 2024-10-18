@@ -13,7 +13,6 @@ import {
 import { Line } from 'react-chartjs-2';
 import styled from 'styled-components';
 import { useGlobalContext } from '../../context/globalContext';
-import { dateFormat } from '../../utils/dateFormat';
 
 ChartJs.register(
     CategoryScale,
@@ -88,6 +87,7 @@ function Chart() {
                 data={data} 
                 options={{
                     responsive: true,
+                    maintainAspectRatio: false, // Allow dynamic height adjustment
                     plugins: {
                         legend: {
                             display: true,
@@ -125,7 +125,26 @@ const ChartStyled = styled.div`
     box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
     padding: 1rem;
     border-radius: 20px;
-    height: 100%;
+    height: 400px; /* Set a base height */
+    width: 100%; /* Full width */
+
+    @media (max-width: 1024px) {
+        height: 300px; /* Adjust height for tablets */
+    }
+
+    @media (max-width: 768px) {
+        height: 250px; /* Adjust height for smaller screens */
+    }
+
+    @media (max-width: 480px) {
+        height: 200px; /* Adjust height for mobile devices */
+        padding: 0.5rem; /* Reduce padding for mobile */
+    }
+
+    canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
 `;
 
 export default Chart;

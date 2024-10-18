@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
@@ -9,15 +8,18 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
     const [rememberMe, setRememberMe] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMessage('');
         setSuccessMessage('');
+        setIsLoading(true);
 
         if (!email || !password) {
             setErrorMessage('Email and password are required');
+            setIsLoading(false);
             return;
         }
 
@@ -40,10 +42,7 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                     localStorage.removeItem('email');
                 }
 
-                // Store the token in localStorage
                 localStorage.setItem('token', data.token);
-
-                // Call onAuthenticate to update the authentication state and redirect
                 onAuthenticate(true, '/');
             } else {
                 const errorData = await response.json();
@@ -52,9 +51,10 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
         } catch (error) {
             setErrorMessage('An error occurred. Please try again.');
             console.error('Error:', error.message);
+        } finally {
+            setIsLoading(false);
         }
     };
-
 
     return (
         <div className="background-container">
@@ -92,7 +92,10 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                         />
                         <label htmlFor="rememberMe">Remember Me</label>
                     </div>
-                    <button type="submit">Log In</button>
+                    <button type="submit" disabled={isLoading}>
+                        {isLoading ? 'Logging in...' : 'Log In'}
+                    </button>
+                    {isLoading && <div className="loader"></div>}
                 </form>
                 <button className="link-btn" onClick={() => onFormSwitch('register')}>
                     Don't have an account? Register here.
