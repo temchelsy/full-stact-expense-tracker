@@ -9,6 +9,7 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
     const [lastName, setLastName] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const validatePassword = (password) => {
         if (password.length < 8) {
@@ -30,24 +31,32 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
         e.preventDefault();
         setErrorMessage('');
         setSuccessMessage('');
+        setIsLoading(true);
 
+        // Check for required fields
         if (!firstName || !lastName) {
             setErrorMessage('First name and last name are required.');
+            setIsLoading(false);
             return;
         }
 
+        // Validate password
         const passwordValidationMessage = validatePassword(password);
         if (passwordValidationMessage) {
             setErrorMessage(passwordValidationMessage);
+            setIsLoading(false);
             return;
         }
 
+        // Confirm passwords match
         if (password !== confirmPassword) {
             setErrorMessage('Passwords do not match.');
+            setIsLoading(false);
             return;
         }
 
         try {
+            // Send registration data to the API
             const response = await fetch('https://full-stact-expense-tracker.onrender.com/api/v1/register', {
                 method: 'POST',
                 headers: {
@@ -59,14 +68,31 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
             if (!response.ok) {
                 const errorData = await response.json();
                 setErrorMessage(errorData.error || 'An error occurred. Please try again.');
+                setIsLoading(false);
                 return;
             }
 
-            setSuccessMessage('Registration successful! You can now log in.');
-            onAuthenticate(true, '/'); // Change to the path you want to redirect to after successful registration
+            const data = await response.json();
+
+            // Store lastName in localStorage for future use
+            localStorage.setItem('lastName', lastName);
+            
+            // Optionally, store authentication token if provided by the backend
+            if (data.token) {
+                localStorage.setItem('token', data.token);
+            }
+
+            // Show success message and proceed to authenticate
+            setSuccessMessage('Registration successful! Redirecting to login...');
+            setTimeout(() => {
+                onAuthenticate(true, '/'); // Trigger the onAuthenticate callback to proceed after registration
+            }, 1500); // Redirect after 1.5 seconds
+
         } catch (error) {
             setErrorMessage('An error occurred. Please try again.');
             console.error('Error:', error.message);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -125,7 +151,10 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
                         name="confirmPassword"
                         required
                     />
-                    <button type="submit">Register</button>
+                    <button type="submit" disabled={isLoading}>
+                        {isLoading ? 'Registering...' : 'Register'}
+                    </button>
+                    {isLoading && <div className="loader"></div>}
                 </form>
                 <button className="link-btn" onClick={() => onFormSwitch('login')}>
                     Already have an account? Login here.
