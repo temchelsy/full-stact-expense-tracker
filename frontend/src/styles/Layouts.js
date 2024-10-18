@@ -5,6 +5,7 @@ export const MainLayout = styled.div`
     min-height: 100vh;
     display: flex;
     gap: 2rem;
+    
 
     @media screen and (max-width: 1200px) {
         flex-direction: column;
