@@ -11,44 +11,44 @@ function ExpenseForm() {
     const [inputState, setInputState] = useState({
         title: '',
         amount: '',
-        date: null,  // Set date to null initially
+        date: null,
         category: '',
         description: '',
     });
 
     const { title, amount, date, category, description } = inputState;
 
-    const handleInput = name => e => {
+    const handleInput = (name) => (e) => {
         setInputState({ ...inputState, [name]: e.target.value });
         setError('');
     };
 
-    const handleSubmit = async e => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
             await addExpense({
                 ...inputState,
-                amount: Number(amount),  // Ensure amount is a number
+                amount: Number(amount),
             });
-            
+
             // Reset form after successful submission
             setInputState({
                 title: '',
                 amount: '',
-                date: null,  // Reset date to null
+                date: null,
                 category: '',
                 description: '',
             });
         } catch (error) {
             console.error('Error adding expense:', error);
-            setError('Failed to add expense');  // Set error message for display
+            setError('Failed to add expense');
         }
     };
 
     return (
         <ExpenseFormStyled onSubmit={handleSubmit}>
-            {error && <p className='error'>{error}</p>}
+            {error && <p className="error">{error}</p>}
             
             <div className="input-control">
                 <input 
@@ -63,7 +63,7 @@ function ExpenseForm() {
             <div className="input-control">
                 <input 
                     value={amount}  
-                    type="number"  // Changed to number
+                    type="number"
                     name="amount" 
                     placeholder="Expense Amount"
                     onChange={handleInput('amount')} 
@@ -72,15 +72,15 @@ function ExpenseForm() {
 
             <div className="input-control">
                 <DatePicker 
-                    id='date'
-                    placeholderText='Enter A Date'
+                    id="date"
+                    placeholderText="Enter A Date"
                     selected={date}
                     dateFormat="dd/MM/yyyy"
                     onChange={(date) => setInputState({ ...inputState, date })}
                 />
             </div>
 
-            <div className="selects input-control">
+            <div className="input-control">
                 <select 
                     required 
                     value={category} 
@@ -88,7 +88,7 @@ function ExpenseForm() {
                     id="category" 
                     onChange={handleInput('category')}
                 >
-                    <option value="" disabled>Select Option</option>
+                    <option value="" disabled>Select Category</option>
                     <option value="education">Education</option>
                     <option value="groceries">Groceries</option>
                     <option value="health">Health</option>
@@ -129,51 +129,96 @@ function ExpenseForm() {
 const ExpenseFormStyled = styled.form`
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
+    background-color: #f9f9f9;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 
-    input, textarea, select {
-        font-family: inherit;
-        font-size: inherit;
-        outline: none;
-        border: none;
-        padding: .5rem 1rem;
-        border-radius: 5px;
-        border: 2px solid #fff;
-        background: transparent;
-        resize: none;
-        box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
-        color: rgba(34, 34, 96, 0.9);
-
-        &::placeholder {
-            color: rgba(34, 34, 96, 0.4);
-        }
+    .error {
+        color: red;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
     }
 
     .input-control {
-        input {
-            width: 100%;
-        }
-    }
-
-    .selects {
         display: flex;
-        justify-content: flex-end;
+        flex-direction: column;
 
-        select {
-            color: rgba(34, 34, 96, 0.4);
+        input, textarea, select {
+            width: 100%;
+            font-family: inherit;
+            font-size: 1rem;
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background: #fff;
+            color: #222;
 
-            &:focus, &:active {
-                color: rgba(34, 34, 96, 1);
+            &:focus {
+                border-color: var(--color-accent);
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            }
+
+            &::placeholder {
+                color: #999;
             }
         }
     }
 
     .submit-btn {
+        display: flex;
+        justify-content: center;
+
         button {
-            box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 250px;
+            background: var(--color-accent);
+            color: #fff;
+            padding: 0.8rem 1.6rem;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
 
             &:hover {
-                background: var(--color-green) !important;
+                background: var(--color-green);
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        padding: 1.5rem;
+        .input-control {
+            input, textarea, select {
+                font-size: 0.9rem;
+                padding: 0.6rem;
+            }
+        }
+
+        .submit-btn {
+            button {
+                padding: 0.6rem 1.4rem;
+                font-size: 0.9rem;
+            }
+        }
+    }
+
+    @media (max-width: 480px) {
+        padding: 1rem;
+
+        .input-control {
+            input, textarea, select {
+                font-size: 0.85rem;
+                padding: 0.5rem;
+            }
+        }
+
+        .submit-btn {
+            button {
+                padding: 0.5rem 1.2rem;
+                font-size: 0.85rem;
+                max-width: 200px;
             }
         }
     }
