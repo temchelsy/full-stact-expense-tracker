@@ -13,12 +13,19 @@ export const GlobalProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token'));
 
     useEffect(() => {
-        if (token) {
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        const storedToken = localStorage.getItem('token'); // Retrieve token from localStorage
+        console.log("Token from localStorage:", storedToken); // Debugging: Check token
+        
+        if (storedToken) {
+            setToken(storedToken); // Set token in state
+            axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+            console.log("Axios headers set with token:", axios.defaults.headers.common['Authorization']); // Debug
         } else {
             delete axios.defaults.headers.common['Authorization'];
+            console.log("No token found, Axios headers cleared."); // Debugging: No token
         }
-    }, [token]);
+    }, []);
+    
 
     // Functions to handle income and expense operations
     const addIncome = async (income) => {
