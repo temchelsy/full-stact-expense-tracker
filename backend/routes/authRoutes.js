@@ -4,11 +4,11 @@ import { getCurrentUser, register, login} from '../controllers/authController.js
 
 const router = express.Router();
 
-// Public routes
+
 router.post('/register', register);
 router.post('/login', login);
 
-// Protected routes
+
 router.get('/current', authenticateUser, getCurrentUser);
 
 export default router;

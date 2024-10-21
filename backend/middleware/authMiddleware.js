@@ -21,10 +21,10 @@ const authenticateUser = async (req, res, next) => {
             return res.status(401).json({ status: "failed", message: "Unauthorized: User not found." });
         }
 
-        // Attach user information to req.user
+        
         req.user = user;
 
-        next(); // Proceed to the next middleware or route handler
+        next();
     } catch (error) {
         if (error.name === "JsonWebTokenError" || error.name === "TokenExpiredError") {
             return res.status(401).json({ status: "failed", message: "Unauthorized: Invalid or expired token." });

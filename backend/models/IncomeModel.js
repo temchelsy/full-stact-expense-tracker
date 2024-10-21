@@ -36,7 +36,7 @@ const IncomeSchema = new mongoose.Schema({
     userId: { // Field to link the income to a user
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'User' // Reference to User model
+        ref: 'User'
     }
 }, { timestamps: true });
 

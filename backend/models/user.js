@@ -7,16 +7,9 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     
-    resetCode: { type: Number }, // New field for password reset code
+    resetCode: { type: Number }, 
     
-    sessions: [
-      {
-        ip: { type: String },
-        device: { type: String },
-        location: { type: String },
-        loggedInAt: { type: Date, default: Date.now },
-      },
-    ],
+
   },
   { timestamps: true }
 );
