@@ -1,4 +1,4 @@
-import Income from '../models/IncomeModel.js'; // Ensure this model is correct
+import Income from '../models/IncomeModel.js'; 
 
 // Function to add income
 export const addIncome = async (req, res) => {
@@ -20,7 +20,7 @@ export const addIncome = async (req, res) => {
         category,
         description,
         date,
-        userId: req.user.id, // Link this income to a user
+        userId: req.user.id, 
     });
 
     try {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
 
@@ -34,16 +34,29 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
 
             if (response.ok) {
                 const data = await response.json();
-                setSuccessMessage('Login successful!');
+                
+                // Log the entire response to check for the token
+                console.log('Server Response:', data);
+                
+                if (data.token) {
+                    setSuccessMessage('Login successful!');
 
-                if (rememberMe) {
-                    localStorage.setItem('email', email);
+                    // Store the token in localStorage
+                    localStorage.setItem('token', data.token);
+
+                    // Handle "Remember Me" logic
+                    if (rememberMe) {
+                        localStorage.setItem('email', email);
+                    } else {
+                        localStorage.removeItem('email');
+                    }
+
+                    // Call authentication handler and navigate to home
+                    onAuthenticate(true, '/');
                 } else {
-                    localStorage.removeItem('email');
+                    setErrorMessage('Login successful, but no token received. Please try again.');
                 }
 
-                localStorage.setItem('token', data.token);
-                onAuthenticate(true, '/');
             } else {
                 const errorData = await response.json();
                 setErrorMessage(errorData.error || 'Login failed. Please try again.');
