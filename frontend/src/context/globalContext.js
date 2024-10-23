@@ -15,6 +15,7 @@ const TokenService = {
     setToken: (token) => {
         if (token) {
             sessionStorage.setItem('token', token);
+            localStorage.setItem('token', token); // Also store in localStorage for persistence
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             console.log("Token set in Axios headers:", axios.defaults.headers.common['Authorization']); // Debugging
         } else {
@@ -48,15 +49,16 @@ export const GlobalProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userId, setUserId] = useState(null);
+    const [token, setToken] = useState(TokenService.getToken());
 
     // Initialize authentication state
     useEffect(() => {
         const initializeAuth = async () => {
-            const token = TokenService.getToken();
-            console.log("Initial token:", token ? "exists" : "not found"); // Debugging
-
-            if (token) {
-                TokenService.setToken(token); // This sets axios headers
+            const storedToken = TokenService.getToken();
+            console.log("Initial token:", storedToken ? "exists" : "not found");
+            if (storedToken) {
+                setToken(storedToken);
+                TokenService.setToken(storedToken);
                 setIsAuthenticated(true);
                 try {
                     await Promise.all([getIncomes(), getExpenses()]);
@@ -74,9 +76,10 @@ export const GlobalProvider = ({ children }) => {
         initializeAuth();
     }, []);
 
-    const handleLogin = async (token, uid) => {
+    const handleLogin = async (newToken, uid) => {
         console.log("Handling login...");
-        TokenService.setToken(token);
+        TokenService.setToken(newToken);
+        setToken(newToken);
         setIsAuthenticated(true);
         setUserId(uid);
         try {
@@ -91,16 +94,19 @@ export const GlobalProvider = ({ children }) => {
     const handleLogout = () => {
         console.log("Handling logout...");
         TokenService.removeToken();
+        setToken(null);
         setIsAuthenticated(false);
         setUserId(null);
         setIncomes([]);
         setExpenses([]);
+        localStorage.removeItem('lastName');
+        window.location.href = '/login';
     };
 
     // API request wrapper with auth check
     const protectedRequest = async (request) => {
-        const token = TokenService.getToken();
-        if (!token) {
+        const currentToken = TokenService.getToken();
+        if (!currentToken) {
             console.log("No token found in protectedRequest");
             handleLogout();
             throw new Error('User not authenticated');
@@ -211,7 +217,9 @@ export const GlobalProvider = ({ children }) => {
             isAuthenticated,
             handleLogin,
             handleLogout,
-            userId
+            userId,
+            token,
+            setToken
         }}>
             {children}
         </GlobalContext.Provider>
@@ -221,3 +229,5 @@ export const GlobalProvider = ({ children }) => {
 export const useGlobalContext = () => {
     return useContext(GlobalContext);
 };
+
+export default GlobalContext;
