@@ -11,29 +11,54 @@ export const GlobalProvider = ({ children }) => {
     const [error, setError] = useState(null);
     const [userId, setUserId] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('token'));
+    const [isInitialized, setIsInitialized] = useState(false);
 
+    // Initialize axios with token
     useEffect(() => {
-        const storedToken = localStorage.getItem('token'); // Retrieve token from localStorage
-        console.log("Token from localStorage:", storedToken); // Debugging: Check token
-        
+        const storedToken = localStorage.getItem('token');
         if (storedToken) {
-            setToken(storedToken); // Set token in state
+            setToken(storedToken);
             axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-            console.log("Axios headers set with token:", axios.defaults.headers.common['Authorization']); // Debug
         } else {
             delete axios.defaults.headers.common['Authorization'];
-            console.log("No token found, Axios headers cleared."); // Debugging: No token
         }
+        setIsInitialized(true);
     }, []);
-    
 
-    // Functions to handle income and expense operations
+    // Fetch initial data after initialization
+    useEffect(() => {
+        if (isInitialized && token) {
+            getIncomes();
+            getExpenses();
+        }
+    }, [isInitialized, token]);
+
+    // Add axios interceptor to handle 401 errors
+    useEffect(() => {
+        const interceptor = axios.interceptors.response.use(
+            response => response,
+            error => {
+                if (error.response?.status === 401) {
+                    // Clear token and redirect to login
+                    localStorage.removeItem('token');
+                    setToken(null);
+                    setError('Session expired. Please login again.');
+                    // You might want to redirect to login page here
+                }
+                return Promise.reject(error);
+            }
+        );
+
+        return () => axios.interceptors.response.eject(interceptor);
+    }, []);
+
     const addIncome = async (income) => {
         try {
             const response = await axios.post(`${BASE_URL}add-income`, income);
             getIncomes();
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to add income');
+            throw err;
         }
     };
 
@@ -43,6 +68,7 @@ export const GlobalProvider = ({ children }) => {
             setIncomes(response.data);
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to get incomes');
+            throw err;
         }
     };
 
@@ -52,6 +78,7 @@ export const GlobalProvider = ({ children }) => {
             getIncomes();
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to delete income');
+            throw err;
         }
     };
 
@@ -61,15 +88,21 @@ export const GlobalProvider = ({ children }) => {
             getExpenses();
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to add expense');
+            throw err;
         }
     };
 
     const getExpenses = async () => {
+        if (!token) {
+            setError('Authentication token is missing');
+            return;
+        }
         try {
             const response = await axios.get(`${BASE_URL}get-expenses`);
             setExpenses(response.data);
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to get expenses');
+            throw err;
         }
     };
 
@@ -79,6 +112,7 @@ export const GlobalProvider = ({ children }) => {
             getExpenses();
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to delete expense');
+            throw err;
         }
     };
 
@@ -117,9 +151,9 @@ export const GlobalProvider = ({ children }) => {
             error,
             setError,
             userId,
-            setUserId, // Ensure setUserId is also provided
+            setUserId,
             token,
-            setToken // Add setToken to the provider value
+            setToken
         }}>
             {children}
         </GlobalContext.Provider>

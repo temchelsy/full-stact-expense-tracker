@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import bg from './img/bg.png';
 import { MainLayout } from './styles/Layouts';
@@ -13,18 +13,29 @@ import Authentification from './Components/Auth/auth';
 
 function App() {
     const [active, setActive] = useState(1);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false); // State to track if the user is authenticated
     const navigate = useNavigate();
-
+    
     const global = useGlobalContext();
     console.log(global);
 
     const orbMemo = useMemo(() => <Orb />, []);
 
-    const handleAuthentication = (authStatus, redirectPath) => {
+    // Check if the user is authenticated based on the presence of a token in localStorage
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            setIsAuthenticated(true); // Automatically set authenticated if token exists
+        } else {
+            setIsAuthenticated(false); // If no token, the user is logged out
+        }
+    }, []);
+
+    // Function to handle authentication and navigation
+    const handleAuthentication = (authStatus, redirectPath = '/') => {
         setIsAuthenticated(authStatus);
-        if (redirectPath) {
-            navigate(redirectPath);
+        if (authStatus) {
+            navigate(redirectPath);  // Navigate to dashboard if login is successful
         }
     };
 
