@@ -5,24 +5,15 @@ import { menuItems } from '../../utils/menuItems';
 import { useGlobalContext } from '../../context/globalContext';
 
 function Navigation({ active, setActive }) {
-    const { token, setToken, userId, setUserId } = useGlobalContext(); 
-    const [lastName, setLastName] = useState(localStorage.getItem('lastName')); // Local state for lastName
+    const { handleLogout } = useGlobalContext();
+    const [lastName, setLastName] = useState(localStorage.getItem('lastName'));
 
-    // Update the state when localStorage changes
     useEffect(() => {
         const storedLastName = localStorage.getItem('lastName');
         if (storedLastName) {
             setLastName(storedLastName);
         }
     }, []);
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('lastName');
-        setToken(null);  // Clear token in the global context
-        setUserId(null); // Clear userId if you're using it in context
-        window.location.href = '/login';
-    };
 
     return (
         <NavStyled>
@@ -34,7 +25,11 @@ function Navigation({ active, setActive }) {
             </div>
             <ul className="menu-items">
                 {menuItems.map((item) => (
-                    <li key={item.id} onClick={() => setActive(item.id)} className={active === item.id ? 'active' : ''}>
+                    <li
+                        key={item.id}
+                        onClick={() => setActive(item.id)}
+                        className={active === item.id ? 'active' : ''}
+                    >
                         {item.icon}
                         <span>{item.title}</span>
                     </li>
