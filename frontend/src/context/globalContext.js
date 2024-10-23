@@ -9,7 +9,7 @@ const GlobalContext = React.createContext();
 const TokenService = {
     getToken: () => {
         const token = sessionStorage.getItem('token') || localStorage.getItem('token');
-        console.log("Token fetched from storage:", token); // Debugging
+        console.log("Token fetched from storage:", token); 
         return token;
     },
     setToken: (token) => {
@@ -31,7 +31,7 @@ const TokenService = {
     }
 };
 
-// Axios interceptor to automatically attach the token
+
 axios.interceptors.request.use((config) => {
     const token = TokenService.getToken();
     if (token) {
