@@ -8,15 +8,18 @@ const GlobalContext = React.createContext();
 // Secure token storage utility
 const TokenService = {
     getToken: () => {
-        return sessionStorage.getItem('token') || localStorage.getItem('token'); // Check both storages during transition
+        const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+        console.log("Token fetched from storage:", token); // Debugging
+        return token;
     },
     setToken: (token) => {
         if (token) {
             sessionStorage.setItem('token', token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            console.log("Token set in Axios headers:", axios.defaults.headers.common['Authorization']); // Debugging
         } else {
             sessionStorage.removeItem('token');
-            localStorage.removeItem('token'); // Clean up old storage
+            localStorage.removeItem('token');
             delete axios.defaults.headers.common['Authorization'];
         }
     },
@@ -27,11 +30,22 @@ const TokenService = {
     }
 };
 
+// Axios interceptor to automatically attach the token
+axios.interceptors.request.use((config) => {
+    const token = TokenService.getToken();
+    if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
+
 export const GlobalProvider = ({ children }) => {
     const [incomes, setIncomes] = useState([]);
     const [expenses, setExpenses] = useState([]);
     const [error, setError] = useState(null);
-    const [isLoading, setIsLoading] = useState(true); // Start with loading true
+    const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userId, setUserId] = useState(null);
 
@@ -39,8 +53,8 @@ export const GlobalProvider = ({ children }) => {
     useEffect(() => {
         const initializeAuth = async () => {
             const token = TokenService.getToken();
-            console.log("Initial token:", token ? "exists" : "not found");
-            
+            console.log("Initial token:", token ? "exists" : "not found"); // Debugging
+
             if (token) {
                 TokenService.setToken(token); // This sets axios headers
                 setIsAuthenticated(true);
@@ -48,7 +62,7 @@ export const GlobalProvider = ({ children }) => {
                     await Promise.all([getIncomes(), getExpenses()]);
                     console.log("Initial data fetch successful");
                 } catch (err) {
-                    console.error("Error fetching initial data:", err);
+                    console.error("Error fetching initial data:", err.response ? err.response.data : err.message);
                     if (err.response?.status === 401) {
                         handleLogout();
                     }
@@ -58,7 +72,7 @@ export const GlobalProvider = ({ children }) => {
         };
 
         initializeAuth();
-    }, []); // Empty dependency array for initialization
+    }, []);
 
     const handleLogin = async (token, uid) => {
         console.log("Handling login...");
@@ -69,7 +83,7 @@ export const GlobalProvider = ({ children }) => {
             await Promise.all([getIncomes(), getExpenses()]);
             console.log("Data fetched after login");
         } catch (err) {
-            console.error("Error fetching data after login:", err);
+            console.error("Error fetching data after login:", err.response ? err.response.data : err.message);
             setError("Failed to fetch data after login");
         }
     };
@@ -115,9 +129,11 @@ export const GlobalProvider = ({ children }) => {
     const getIncomes = async () => {
         try {
             const response = await protectedRequest(() => axios.get(`${BASE_URL}get-incomes`));
+            console.log("Incomes response data:", response.data); // Debugging
             setIncomes(response.data);
             return response.data;
         } catch (err) {
+            console.error("Error fetching incomes:", err.response ? err.response.data : err.message);
             setError(err.message || 'Failed to fetch incomes');
             throw err;
         }
@@ -146,9 +162,11 @@ export const GlobalProvider = ({ children }) => {
     const getExpenses = async () => {
         try {
             const response = await protectedRequest(() => axios.get(`${BASE_URL}get-expenses`));
+            console.log("Expenses response data:", response.data); // Debugging
             setExpenses(response.data);
             return response.data;
         } catch (err) {
+            console.error("Error fetching expenses:", err.response ? err.response.data : err.message);
             setError(err.message || 'Failed to fetch expenses');
             throw err;
         }
