@@ -22,7 +22,7 @@ const createJWT = (id) => {
   return jwt.sign(
     { userId: id },
     process.env.JWT_SECRET,
-    { expiresIn: "1d" }
+    { expiresIn: "30d" }
   );
 };
 
