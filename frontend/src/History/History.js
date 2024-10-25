@@ -41,6 +41,8 @@ const HistoryStyled = styled.div`
     flex-direction: column;
     gap: 1.5rem;
     padding: 1rem;
+    max-width: 600px; /* Limit width for better readability */
+    margin: auto; /* Center the component */
 
     h2 {
         font-size: 1.5rem;
@@ -67,32 +69,32 @@ const HistoryStyled = styled.div`
 
     @media (max-width: 768px) {
         h2 {
-            font-size: 1.3rem;
+            font-size: 1.3rem; /* Adjust heading size */
         }
 
         .history-item {
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 0.8rem;
-            gap: 0.5rem;
+            flex-direction: column; /* Stack title and amount on smaller screens */
+            align-items: flex-start; /* Align items to the left */
+            padding: 0.8rem; /* Adjust padding */
+            gap: 0.5rem; /* Gap between title and amount */
 
             .title, .amount {
-                font-size: 0.9rem;
+                font-size: 0.9rem; /* Adjust font size for smaller screens */
             }
         }
     }
 
     @media (max-width: 480px) {
         h2 {
-            font-size: 1.2rem;
+            font-size: 1.2rem; /* Smaller heading size */
         }
 
         .history-item {
-            padding: 0.6rem;
-            gap: 0.4rem;
+            padding: 0.6rem; /* Reduced padding */
+            gap: 0.4rem; /* Smaller gap between items */
 
             .title, .amount {
-                font-size: 0.85rem;
+                font-size: 0.85rem; /* Smaller font size for mobile */
             }
         }
     }
