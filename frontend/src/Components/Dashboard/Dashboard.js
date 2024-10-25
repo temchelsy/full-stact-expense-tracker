@@ -70,7 +70,7 @@ const DashboardStyled = styled.div`
         gap: 2rem;
 
         @media (max-width: 1200px) {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr 1fr;
         }
 
         @media (max-width: 768px) {
@@ -92,11 +92,13 @@ const DashboardStyled = styled.div`
                 margin-top: 2rem;
 
                 @media (max-width: 1200px) {
-                    grid-template-columns: repeat(3, 1fr);
+                    grid-template-columns: 1fr;
+                    gap: 1.5rem;
                 }
 
                 @media (max-width: 768px) {
                     grid-template-columns: 1fr;
+                    gap: 1rem;
                 }
 
                 .income, .expense, .balance {
@@ -187,5 +189,6 @@ const DashboardStyled = styled.div`
         }
     }
 `;
+
 
 export default Dashboard;

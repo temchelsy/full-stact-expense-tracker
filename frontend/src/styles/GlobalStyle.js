@@ -44,17 +44,25 @@ export const GlobalStyle = createGlobalStyle`
         flex-direction: column;
         justify-content: center; 
         min-height: 100vh; 
-        max-width:100vw
+        max-width: 100vw;
     }
         
-
     #root {
-        flex-grow: 3; 
+        flex-grow: 1;
         width: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        padding: 1rem;
+
+        @media screen and (max-width: 768px) {
+            padding: 0.75rem;
+        }
+
+        @media screen and (max-width: 480px) {
+            padding: 0.5rem;
+        }
     }
 
     h1, h2, h3, h4, h5, h6 {
@@ -89,14 +97,22 @@ export const GlobalStyle = createGlobalStyle`
 
     p {
         margin-bottom: 1rem;
+        font-size: 1rem;
         
         @media screen and (max-width: 768px) {
             margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        @media screen and (max-width: 480px) {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
         }
     }
 
     .error {
         color: var(--color-delete);
+        font-size: 0.9rem;
         animation: shake 0.5s ease-in-out;
 
         @keyframes shake {
@@ -105,6 +121,14 @@ export const GlobalStyle = createGlobalStyle`
             50% { transform: translateX(-10px); }
             75% { transform: translateX(10px); }
             100% { transform: translateX(0); }
+        }
+
+        @media screen and (max-width: 768px) {
+            font-size: 0.85rem;
+        }
+
+        @media screen and (max-width: 480px) {
+            font-size: 0.8rem;
         }
     }
 

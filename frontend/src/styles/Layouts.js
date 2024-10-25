@@ -5,7 +5,7 @@ export const MainLayout = styled.div`
     min-height: 100vh;
     display: flex;
     gap: 2rem;
-    
+    flex-wrap: wrap;
 
     @media screen and (max-width: 1200px) {
         flex-direction: column;
@@ -15,6 +15,7 @@ export const MainLayout = styled.div`
     @media screen and (max-width: 768px) {
         padding: 1rem;
         gap: 1.5rem;
+        align-items: center;  // Center align on smaller screens
     }
 
     @media screen and (max-width: 480px) {
@@ -26,6 +27,7 @@ export const MainLayout = styled.div`
 export const InnerLayout = styled.div`
     padding: 2rem;
     width: 100%;
+    max-width: 100%; // Ensure full width at smaller breakpoints
     background: #ffffff;
     border-radius: 1rem;
     box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
