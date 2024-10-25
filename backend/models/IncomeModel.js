@@ -10,7 +10,7 @@ const IncomeSchema = new mongoose.Schema({
     amount: {
         type: Number,
         required: true,
-        maxLength: 20,
+        maxLength: 50,
         trim: true
     },
     type: {
@@ -32,6 +32,11 @@ const IncomeSchema = new mongoose.Schema({
         required: true,
         maxLength: 100,
         trim: true
+    },
+    userId: { // Field to link the income to a user
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
     }
 }, { timestamps: true });
 

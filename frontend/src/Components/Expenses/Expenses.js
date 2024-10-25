@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import styled from 'styled-components'
+import React, { useEffect } from 'react';
+import styled from 'styled-components';
 import { useGlobalContext } from '../../context/globalContext';
 import { InnerLayout } from '../../styles/Layouts';
 import Form from '../Form/Form';
@@ -7,11 +7,12 @@ import IncomeItem from '../IncomeItem/IncomeItem';
 import ExpenseForm from './ExpenseForm';
 
 function Expenses() {
-    const {addIncome,expenses, getExpenses, deleteExpense, totalExpenses} = useGlobalContext()
+    const { addIncome, expenses, getExpenses, deleteExpense, totalExpenses } = useGlobalContext();
 
-    useEffect(() =>{
-        getExpenses()
-    }, [])
+    useEffect(() => {
+        getExpenses();
+    }, []);
+
     return (
         <ExpenseStyled>
             <InnerLayout>
@@ -23,32 +24,35 @@ function Expenses() {
                     </div>
                     <div className="incomes">
                         {expenses.map((income) => {
-                            const {_id, title, amount, date, category, description, type} = income;
-                            console.log(income)
-                            return <IncomeItem
-                                key={_id}
-                                id={_id} 
-                                title={title} 
-                                description={description} 
-                                amount={amount} 
-                                date={date} 
-                                type={type}
-                                category={category} 
-                                indicatorColor="var(--color-green)"
-                                deleteItem={deleteExpense}
-                            />
+                            const { _id, title, amount, date, category, description, type } = income;
+                            return (
+                                <IncomeItem
+                                    key={_id}
+                                    id={_id}
+                                    title={title}
+                                    description={description}
+                                    amount={amount}
+                                    date={date}
+                                    type={type}
+                                    category={category}
+                                    indicatorColor="var(--color-green)"
+                                    deleteItem={deleteExpense}
+                                />
+                            );
                         })}
                     </div>
                 </div>
             </InnerLayout>
         </ExpenseStyled>
-    )
+    );
 }
 
 const ExpenseStyled = styled.div`
     display: flex;
-    overflow: auto;
-    .total-income{
+    flex-direction: column; 
+    overflow: hidden; 
+    
+    .total-income {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -60,19 +64,42 @@ const ExpenseStyled = styled.div`
         margin: 1rem 0;
         font-size: 2rem;
         gap: .5rem;
-        span{
+
+        span {
             font-size: 2.5rem;
             font-weight: 800;
             color: var(--color-green);
         }
     }
-    .income-content{
+
+    .income-content {
         display: flex;
+        flex-direction: column;
         gap: 2rem;
-        .incomes{
-            flex: 1;
+
+        @media (min-width: 768px) {
+            flex-direction: row; 
+        }
+
+        .form-container {
+            flex: 1; 
+            max-width: 400px; 
+            margin: auto;
+        }
+
+        .incomes {
+            flex: 1; 
+            display: flex;
+            flex-direction: column; 
+            gap: 1rem; 
+
+            @media (min-width: 768px) {
+                flex-direction: row; 
+                flex-wrap: wrap; 
+                gap: 1.5rem; 
+            }
         }
     }
 `;
 
-export default Expenses
+export default Expenses;

@@ -1,91 +1,211 @@
-import React, { useContext, useState } from "react"
-import axios from 'axios'
+import React, { useContext, useState, useEffect } from "react";
+import axios from 'axios';
+import { toast } from 'sonner';
 
+const BASE_URL = "https://full-stact-expense-tracker.onrender.com/api/v1/";
 
-const BASE_URL = "http://localhost:8000/api/v1/";
+const GlobalContext = React.createContext();
 
-
-const GlobalContext = React.createContext()
-
-export const GlobalProvider = ({children}) => {
-
-    const [incomes, setIncomes] = useState([])
-    const [expenses, setExpenses] = useState([])
-    const [error, setError] = useState(null)
-
-    //calculate incomes
-    const addIncome = async (income) => {
-        const response = await axios.post(`${BASE_URL}add-income`, income)
-            .catch((err) =>{
-                setError(err.response.data.message)
-            })
-        getIncomes()
+const TokenService = {
+    getToken: () => {
+        const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+        console.log("Token fetched from storage:", token); 
+        return token;
+    },
+    setToken: (token) => {
+        if (token) {
+            sessionStorage.setItem('token', token);
+            localStorage.setItem('token', token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            console.log("Token set in Axios headers:", axios.defaults.headers.common['Authorization']);
+        } else {
+            sessionStorage.removeItem('token');
+            localStorage.removeItem('token');
+            delete axios.defaults.headers.common['Authorization'];
+        }
+    },
+    removeToken: () => {
+        sessionStorage.removeItem('token');
+        localStorage.removeItem('token');
+        delete axios.defaults.headers.common['Authorization'];
     }
+};
+
+axios.interceptors.request.use((config) => {
+    const token = TokenService.getToken();
+    if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
+
+export const GlobalProvider = ({ children }) => {
+    const [incomes, setIncomes] = useState([]);
+    const [expenses, setExpenses] = useState([]);
+    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [userId, setUserId] = useState(null);
+    const [token, setToken] = useState(TokenService.getToken());
+
+    useEffect(() => {
+        const initializeAuth = async () => {
+            const storedToken = TokenService.getToken();
+            console.log("Initial token:", storedToken ? "exists" : "not found");
+            if (storedToken) {
+                setToken(storedToken);
+                TokenService.setToken(storedToken);
+                setIsAuthenticated(true);
+                try {
+                    await Promise.all([getIncomes(), getExpenses()]);
+                    console.log("Initial data fetch successful");
+                } catch (err) {
+                    console.error("Error fetching initial data:", err.response ? err.response.data : err.message);
+                    if (err.response?.status === 401) {
+                        handleLogout();
+                    }
+                }
+            }
+            setIsLoading(false);
+        };
+
+        initializeAuth();
+    }, []);
+
+    const handleLogin = async (newToken, uid) => {
+        console.log("Handling login...");
+        TokenService.setToken(newToken);
+        setToken(newToken);
+        setIsAuthenticated(true);
+        setUserId(uid);
+        try {
+            await Promise.all([getIncomes(), getExpenses()]);
+            console.log("Data fetched after login");
+            toast.success('Successfully logged in!');
+        } catch (err) {
+            console.error("Error fetching data after login:", err.response ? err.response.data : err.message);
+            setError("Failed to fetch data after login");
+            toast.error('Failed to fetch data after login');
+        }
+    };
+
+    const handleLogout = () => {
+        console.log("Handling logout...");
+        TokenService.removeToken();
+        setToken(null);
+        setIsAuthenticated(false);
+        setUserId(null);
+        setIncomes([]);
+        setExpenses([]);
+        localStorage.removeItem('lastName');
+        toast.info('Logged out successfully');
+        window.location.href = '/login';
+    };
+
+    const protectedRequest = async (request) => {
+        const currentToken = TokenService.getToken();
+        if (!currentToken) {
+            console.log("No token found in protectedRequest");
+            handleLogout();
+            throw new Error('User not authenticated');
+        }
+
+        try {
+            return await request();
+        } catch (error) {
+            if (error.response?.status === 401) {
+                handleLogout();
+            }
+            throw error;
+        }
+    };
+
+    const addIncome = async (income) => {
+        try {
+            await protectedRequest(() => axios.post(`${BASE_URL}add-income`, income));
+            await getIncomes();
+            toast.success('Income added successfully');
+        } catch (err) {
+            setError(err.message || 'Failed to add income');
+            toast.error('Failed to add income');
+            throw err;
+        }
+    };
 
     const getIncomes = async () => {
-        const response = await axios.get(`${BASE_URL}get-incomes`)
-        setIncomes(response.data)
-        console.log(response.data)
-    }
+        try {
+            const response = await protectedRequest(() => axios.get(`${BASE_URL}get-incomes`));
+            console.log("Incomes response data:", response.data);
+            setIncomes(response.data);
+            return response.data;
+        } catch (err) {
+            console.error("Error fetching incomes:", err.response ? err.response.data : err.message);
+            setError(err.message || 'Failed to fetch incomes');
+            toast.error('Failed to fetch incomes');
+            throw err;
+        }
+    };
 
     const deleteIncome = async (id) => {
-        const res  = await axios.delete(`${BASE_URL}delete-income/${id}`)
-        getIncomes()
-    }
+        try {
+            await protectedRequest(() => axios.delete(`${BASE_URL}delete-income/${id}`));
+            await getIncomes();
+            toast.success('Income deleted successfully');
+        } catch (err) {
+            setError(err.message || 'Failed to delete income');
+            toast.error('Failed to delete income');
+            throw err;
+        }
+    };
 
-    const totalIncome = () => {
-        let totalIncome = 0;
-        incomes.forEach((income) =>{
-            totalIncome = totalIncome + income.amount
-        })
-
-        return totalIncome;
-    }
-
-
-    //calculate incomes
-    const addExpense = async (income) => {
-        const response = await axios.post(`${BASE_URL}add-expense`, income)
-            .catch((err) =>{
-                setError(err.response.data.message)
-            })
-        getExpenses()
-    }
+    const addExpense = async (expense) => {
+        try {
+            await protectedRequest(() => axios.post(`${BASE_URL}add-expense`, expense));
+            await getExpenses();
+            toast.success('Expense added successfully');
+        } catch (err) {
+            setError(err.message || 'Failed to add expense');
+            toast.error('Failed to add expense');
+            throw err;
+        }
+    };
 
     const getExpenses = async () => {
-        const response = await axios.get(`${BASE_URL}get-expenses`)
-        setExpenses(response.data)
-        console.log(response.data)
-    }
+        try {
+            const response = await protectedRequest(() => axios.get(`${BASE_URL}get-expenses`));
+            console.log("Expenses response data:", response.data);
+            setExpenses(response.data);
+            return response.data;
+        } catch (err) {
+            console.error("Error fetching expenses:", err.response ? err.response.data : err.message);
+            setError(err.message || 'Failed to fetch expenses');
+            toast.error('Failed to fetch expenses');
+            throw err;
+        }
+    };
 
     const deleteExpense = async (id) => {
-        const res  = await axios.delete(`${BASE_URL}delete-expense/${id}`)
-        getExpenses()
-    }
+        try {
+            await protectedRequest(() => axios.delete(`${BASE_URL}delete-expense/${id}`));
+            await getExpenses();
+            toast.success('Expense deleted successfully');
+        } catch (err) {
+            setError(err.message || 'Failed to delete expense');
+            toast.error('Failed to delete expense');
+            throw err;
+        }
+    };
 
-    const totalExpenses = () => {
-        let totalIncome = 0;
-        expenses.forEach((income) =>{
-            totalIncome = totalIncome + income.amount
-        })
-
-        return totalIncome;
-    }
-
-
-    const totalBalance = () => {
-        return totalIncome() - totalExpenses()
-    }
-
+    const totalIncome = () => incomes.reduce((total, income) => total + income.amount, 0);
+    const totalExpenses = () => expenses.reduce((total, expense) => total + expense.amount, 0);
+    const totalBalance = () => totalIncome() - totalExpenses();
     const transactionHistory = () => {
-        const history = [...incomes, ...expenses]
-        history.sort((a, b) => {
-            return new Date(b.createdAt) - new Date(a.createdAt)
-        })
-
-        return history.slice(0, 3)
-    }
-
+        const history = [...incomes, ...expenses];
+        history.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        return history.slice(0, 4);
+    };
 
     return (
         <GlobalContext.Provider value={{
@@ -102,13 +222,21 @@ export const GlobalProvider = ({children}) => {
             totalBalance,
             transactionHistory,
             error,
-            setError
+            isLoading,
+            isAuthenticated,
+            handleLogin,
+            handleLogout,
+            userId,
+            token,
+            setToken
         }}>
             {children}
         </GlobalContext.Provider>
-    )
-}
+    );
+};
 
-export const useGlobalContext = () =>{
-    return useContext(GlobalContext)
-}
+export const useGlobalContext = () => {
+    return useContext(GlobalContext);
+};
+
+export default GlobalContext;

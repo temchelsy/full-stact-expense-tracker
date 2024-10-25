@@ -5,34 +5,39 @@ const ExpenseSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        maxLength: 50
+        maxLength: 50,
     },
     amount: {
         type: Number,
         required: true,
         maxLength: 20,
-        trim: true
+        trim: true,
     },
     type: {
         type: String,
-        default: "expense"
+        default: "expense",
     },
     date: {
         type: Date,
         required: true,
-        trim: true
+        trim: true,
     },
     category: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
     },
     description: {
         type: String,
         required: true,
         maxLength: 70,
-        trim: true
-    }
+        trim: true,
+    },
+    userId: { // Field to link the expense to a user
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User', 
+    },
 }, { timestamps: true });
 
 export default mongoose.model('Expense', ExpenseSchema);
