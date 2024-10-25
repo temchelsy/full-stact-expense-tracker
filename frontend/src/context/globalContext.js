@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from "react";
 import axios from 'axios';
+import { toast } from 'sonner';
 
 const BASE_URL = "https://full-stact-expense-tracker.onrender.com/api/v1/";
 
 const GlobalContext = React.createContext();
 
-// Secure token storage utility
 const TokenService = {
     getToken: () => {
         const token = sessionStorage.getItem('token') || localStorage.getItem('token');
@@ -15,9 +15,9 @@ const TokenService = {
     setToken: (token) => {
         if (token) {
             sessionStorage.setItem('token', token);
-            localStorage.setItem('token', token); // Also store in localStorage for persistence
+            localStorage.setItem('token', token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            console.log("Token set in Axios headers:", axios.defaults.headers.common['Authorization']); // Debugging
+            console.log("Token set in Axios headers:", axios.defaults.headers.common['Authorization']);
         } else {
             sessionStorage.removeItem('token');
             localStorage.removeItem('token');
@@ -30,7 +30,6 @@ const TokenService = {
         delete axios.defaults.headers.common['Authorization'];
     }
 };
-
 
 axios.interceptors.request.use((config) => {
     const token = TokenService.getToken();
@@ -51,7 +50,6 @@ export const GlobalProvider = ({ children }) => {
     const [userId, setUserId] = useState(null);
     const [token, setToken] = useState(TokenService.getToken());
 
-    // Initialize authentication state
     useEffect(() => {
         const initializeAuth = async () => {
             const storedToken = TokenService.getToken();
@@ -85,9 +83,11 @@ export const GlobalProvider = ({ children }) => {
         try {
             await Promise.all([getIncomes(), getExpenses()]);
             console.log("Data fetched after login");
+            toast.success('Successfully logged in!');
         } catch (err) {
             console.error("Error fetching data after login:", err.response ? err.response.data : err.message);
             setError("Failed to fetch data after login");
+            toast.error('Failed to fetch data after login');
         }
     };
 
@@ -100,10 +100,10 @@ export const GlobalProvider = ({ children }) => {
         setIncomes([]);
         setExpenses([]);
         localStorage.removeItem('lastName');
+        toast.info('Logged out successfully');
         window.location.href = '/login';
     };
 
-    // API request wrapper with auth check
     const protectedRequest = async (request) => {
         const currentToken = TokenService.getToken();
         if (!currentToken) {
@@ -126,8 +126,10 @@ export const GlobalProvider = ({ children }) => {
         try {
             await protectedRequest(() => axios.post(`${BASE_URL}add-income`, income));
             await getIncomes();
+            toast.success('Income added successfully');
         } catch (err) {
             setError(err.message || 'Failed to add income');
+            toast.error('Failed to add income');
             throw err;
         }
     };
@@ -135,12 +137,13 @@ export const GlobalProvider = ({ children }) => {
     const getIncomes = async () => {
         try {
             const response = await protectedRequest(() => axios.get(`${BASE_URL}get-incomes`));
-            console.log("Incomes response data:", response.data); // Debugging
+            console.log("Incomes response data:", response.data);
             setIncomes(response.data);
             return response.data;
         } catch (err) {
             console.error("Error fetching incomes:", err.response ? err.response.data : err.message);
             setError(err.message || 'Failed to fetch incomes');
+            toast.error('Failed to fetch incomes');
             throw err;
         }
     };
@@ -149,8 +152,10 @@ export const GlobalProvider = ({ children }) => {
         try {
             await protectedRequest(() => axios.delete(`${BASE_URL}delete-income/${id}`));
             await getIncomes();
+            toast.success('Income deleted successfully');
         } catch (err) {
             setError(err.message || 'Failed to delete income');
+            toast.error('Failed to delete income');
             throw err;
         }
     };
@@ -159,8 +164,10 @@ export const GlobalProvider = ({ children }) => {
         try {
             await protectedRequest(() => axios.post(`${BASE_URL}add-expense`, expense));
             await getExpenses();
+            toast.success('Expense added successfully');
         } catch (err) {
             setError(err.message || 'Failed to add expense');
+            toast.error('Failed to add expense');
             throw err;
         }
     };
@@ -168,12 +175,13 @@ export const GlobalProvider = ({ children }) => {
     const getExpenses = async () => {
         try {
             const response = await protectedRequest(() => axios.get(`${BASE_URL}get-expenses`));
-            console.log("Expenses response data:", response.data); // Debugging
+            console.log("Expenses response data:", response.data);
             setExpenses(response.data);
             return response.data;
         } catch (err) {
             console.error("Error fetching expenses:", err.response ? err.response.data : err.message);
             setError(err.message || 'Failed to fetch expenses');
+            toast.error('Failed to fetch expenses');
             throw err;
         }
     };
@@ -182,13 +190,14 @@ export const GlobalProvider = ({ children }) => {
         try {
             await protectedRequest(() => axios.delete(`${BASE_URL}delete-expense/${id}`));
             await getExpenses();
+            toast.success('Expense deleted successfully');
         } catch (err) {
             setError(err.message || 'Failed to delete expense');
+            toast.error('Failed to delete expense');
             throw err;
         }
     };
 
-    // Calculation methods
     const totalIncome = () => incomes.reduce((total, income) => total + income.amount, 0);
     const totalExpenses = () => expenses.reduce((total, expense) => total + expense.amount, 0);
     const totalBalance = () => totalIncome() - totalExpenses();
