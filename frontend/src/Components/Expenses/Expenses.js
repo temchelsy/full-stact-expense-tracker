@@ -49,8 +49,8 @@ function Expenses() {
 
 const ExpenseStyled = styled.div`
     display: flex;
-    flex-direction: column; /* Stacked layout for smaller screens */
-    overflow: hidden; /* Prevent overflow issues */
+    flex-direction: column; 
+    overflow: hidden; 
     
     .total-income {
         display: flex;
@@ -74,29 +74,29 @@ const ExpenseStyled = styled.div`
 
     .income-content {
         display: flex;
-        flex-direction: column; /* Stacked layout on smaller screens */
+        flex-direction: column;
         gap: 2rem;
 
         @media (min-width: 768px) {
-            flex-direction: row; /* Switch to row layout on larger screens */
+            flex-direction: row; 
         }
 
         .form-container {
-            flex: 1; /* Make form take full width */
-            max-width: 400px; /* Limit max width */
-            margin: auto; /* Center the form container */
+            flex: 1; 
+            max-width: 400px; 
+            margin: auto;
         }
 
         .incomes {
-            flex: 1; /* Make incomes take the remaining space */
+            flex: 1; 
             display: flex;
-            flex-direction: column; /* Stack items vertically */
-            gap: 1rem; /* Gap between income items */
+            flex-direction: column; 
+            gap: 1rem; 
 
             @media (min-width: 768px) {
-                flex-direction: row; /* Align income items side by side */
-                flex-wrap: wrap; /* Wrap items if necessary */
-                gap: 1.5rem; /* Increase gap for better spacing */
+                flex-direction: row; 
+                flex-wrap: wrap; 
+                gap: 1.5rem; 
             }
         }
     }

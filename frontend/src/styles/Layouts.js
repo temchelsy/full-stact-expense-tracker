@@ -15,7 +15,7 @@ export const MainLayout = styled.div`
     @media screen and (max-width: 768px) {
         padding: 1rem;
         gap: 1.5rem;
-        align-items: center;  // Center align on smaller screens
+        align-items: center;  
     }
 
     @media screen and (max-width: 480px) {

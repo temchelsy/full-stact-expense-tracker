@@ -1,11 +1,12 @@
-import {dashboard, expenses, transactions, trend} from '../utils/Icons'
+// utils/menuItems.js
+import { dashboard, expenses, transactions, trend } from '../utils/Icons';
 
 export const menuItems = [
     {
         id: 1,
         title: 'Dashboard',
         icon: dashboard,
-        link: '/dashboard'
+        link: '/dashboard', // Ensure this path is correct
     },
     {
         id: 2,
@@ -23,6 +24,6 @@ export const menuItems = [
         id: 4,
         title: "Expenses",
         icon: expenses,
-        link: "/",
+        link: "/expenses", // Update this path to match your routing
     },
-]
+];

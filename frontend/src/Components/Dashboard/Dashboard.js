@@ -70,19 +70,15 @@ const DashboardStyled = styled.div`
         gap: 2rem;
 
         @media (max-width: 1200px) {
-            grid-template-columns: 1fr 1fr;
-        }
-
-        @media (max-width: 768px) {
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr; /* Stack all items on small screens */
         }
 
         .chart-con {
-            grid-column: 1 / 4;
-            height: 400px;
+            grid-column: 1 / 4; /* Chart takes the first 3 columns */
+            height: auto; /* Allow for natural height */
 
             @media (max-width: 1200px) {
-                grid-column: 1 / -1;
+                grid-column: 1 / -1; /* Full width on smaller screens */
             }
 
             .amount-con {
@@ -92,13 +88,8 @@ const DashboardStyled = styled.div`
                 margin-top: 2rem;
 
                 @media (max-width: 1200px) {
-                    grid-template-columns: 1fr;
+                    grid-template-columns: 1fr; /* Stack on small screens */
                     gap: 1.5rem;
-                }
-
-                @media (max-width: 768px) {
-                    grid-template-columns: 1fr;
-                    gap: 1rem;
                 }
 
                 .income, .expense, .balance {
@@ -115,26 +106,12 @@ const DashboardStyled = styled.div`
                     h2 {
                         font-size: 1.5rem;
                         margin-bottom: 0.5rem;
-
-                        @media (max-width: 1400px) {
-                            font-size: 1.2rem;
-                        }
                     }
 
                     p {
                         font-size: 1.8rem;
                         font-weight: 700;
                         word-break: break-word;
-                        display: flex;
-                        align-items: center;
-
-                        @media (max-width: 1400px) {
-                            font-size: 1.5rem;
-                        }
-
-                        @media (max-width: 768px) {
-                            font-size: 1.8rem;
-                        }
                     }
                 }
 
@@ -146,10 +123,12 @@ const DashboardStyled = styled.div`
         }
 
         .history-con {
-            grid-column: 4 / -1;
+            grid-column: 4 / -1; /* History takes the last column */
+            height: auto; /* Allow for natural height */
+            margin-top: 20px; /* Add space to avoid overlap */
 
             @media (max-width: 1200px) {
-                grid-column: 1 / -1;
+                grid-column: 1 / -1; /* Full width on smaller screens */
             }
 
             h2 {
@@ -179,16 +158,10 @@ const DashboardStyled = styled.div`
                 p {
                     font-weight: 600;
                     font-size: 1.4rem;
-                    word-break: break-word;
-
-                    @media (max-width: 768px) {
-                        font-size: 1.2rem;
-                    }
                 }
             }
         }
     }
 `;
-
 
 export default Dashboard;
