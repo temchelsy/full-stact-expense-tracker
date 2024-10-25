@@ -49,7 +49,7 @@ export const GlobalStyle = createGlobalStyle`
         
 
     #root {
-        flex-grow: 1; /* Makes the container flexible to fill space */
+        flex-grow: 3; 
         width: 100%;
         display: flex;
         flex-direction: column;

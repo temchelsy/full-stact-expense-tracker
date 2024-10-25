@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import bg from './img/bg.png';
 import { MainLayout } from './styles/Layouts';
+import { Toaster } from 'sonner';
 import Orb from './Components/Orb/Orb';
 import Navigation from './Components/Navigation/Navigation';
 import Dashboard from './Components/Dashboard/Dashboard';
@@ -13,7 +14,7 @@ import Authentification from './Components/Auth/auth';
 
 function App() {
     const [active, setActive] = useState(1);
-    const [isAuthenticated, setIsAuthenticated] = useState(false); // State to track if the user is authenticated
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const navigate = useNavigate();
     
     const global = useGlobalContext();
@@ -21,26 +22,25 @@ function App() {
 
     const orbMemo = useMemo(() => <Orb />, []);
 
-    // Check if the user is authenticated based on the presence of a token in localStorage
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            setIsAuthenticated(true); // Automatically set authenticated if token exists
+            setIsAuthenticated(true);
         } else {
-            setIsAuthenticated(false); // If no token, the user is logged out
+            setIsAuthenticated(false);
         }
     }, []);
 
-    // Function to handle authentication and navigation
     const handleAuthentication = (authStatus, redirectPath = '/') => {
         setIsAuthenticated(authStatus);
         if (authStatus) {
-            navigate(redirectPath);  // Navigate to dashboard if login is successful
+            navigate(redirectPath);
         }
     };
 
     return (
         <AppStyled bg={bg} className="App">
+            <Toaster richColors />
             {orbMemo}
             <MainLayout>
                 {isAuthenticated ? (

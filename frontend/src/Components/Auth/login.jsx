@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
+import { toast } from 'sonner';
 
 export const Login = ({ onAuthenticate, onFormSwitch }) => {
     const [email, setEmail] = useState('');
@@ -39,7 +40,8 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                 console.log('Server Response:', data);
                 
                 if (data.token) {
-                    setSuccessMessage('Login successful!');
+                    // setSuccessMessage('Login successful!');
+                    toast.success('login successful')
 
                     // Store the token in localStorage
                     localStorage.setItem('token', data.token);
@@ -59,11 +61,13 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
 
             } else {
                 const errorData = await response.json();
-                setErrorMessage(errorData.error || 'Login failed. Please try again.');
+                // setErrorMessage(errorData.error || 'Login failed. Please try again.');
+                
             }
         } catch (error) {
             setErrorMessage('An error occurred. Please try again.');
             console.error('Error:', error.message);
+            toast.error('login failed')
         } finally {
             setIsLoading(false);
         }
