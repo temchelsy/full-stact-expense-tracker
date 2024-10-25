@@ -25,14 +25,11 @@ function ExpenseForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
             await addExpense({
                 ...inputState,
                 amount: Number(amount),
             });
-
-            // Reset form after successful submission
             setInputState({
                 title: '',
                 amount: '',
@@ -47,7 +44,7 @@ function ExpenseForm() {
     };
 
     return (
-        <ExpenseFormStyled onSubmit={handleSubmit}>
+        <FormStyled onSubmit={handleSubmit}>
             {error && <p className="error">{error}</p>}
             
             <div className="input-control">
@@ -122,11 +119,11 @@ function ExpenseForm() {
                     color="#fff"
                 />
             </div>
-        </ExpenseFormStyled>
+        </FormStyled>
     );
 }
 
-const ExpenseFormStyled = styled.form`
+const FormStyled = styled.form`
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -134,6 +131,9 @@ const ExpenseFormStyled = styled.form`
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 500px;  /* Limit the maximum width */
+    width: 100%;  /* Allow it to shrink on smaller screens */
+    margin: 0 auto;  /* Center the form */
 
     .error {
         color: red;
@@ -188,7 +188,8 @@ const ExpenseFormStyled = styled.form`
     }
 
     @media (max-width: 768px) {
-        padding: 1.5rem;
+        
+
         .input-control {
             input, textarea, select {
                 font-size: 0.9rem;

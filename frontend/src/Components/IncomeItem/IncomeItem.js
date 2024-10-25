@@ -110,7 +110,8 @@ const IncomeItemStyled = styled.div`
     gap: 1rem;
     width: 100%;
     color: #222260;
-    .icon{
+
+    .icon {
         width: 80px;
         height: 80px;
         border-radius: 20px;
@@ -119,24 +120,27 @@ const IncomeItemStyled = styled.div`
         align-items: center;
         justify-content: center;
         border: 2px solid #FFFFFF;
-        i{
+
+        i {
             font-size: 2.6rem;
         }
     }
 
-    .content{
+    .content {
         flex: 1;
         display: flex;
         flex-direction: column;
         gap: .2rem;
-        h5{
+
+        h5 {
             font-size: 1.3rem;
-            padding-left: 2rem;
+            padding-left: 1rem; /* Adjusted padding for better alignment */
             position: relative;
-            &::before{
+
+            &::before {
                 content: '';
                 position: absolute;
-                left: 0;
+                left: -1.5rem; /* Adjusted position for indicator */
                 top: 50%;
                 transform: translateY(-50%);
                 width: .8rem;
@@ -146,20 +150,70 @@ const IncomeItemStyled = styled.div`
             }
         }
 
-        .inner-content{
+        .inner-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            .text{
+            flex-wrap: wrap; /* Added wrap for better responsiveness */
+
+            .text {
                 display: flex;
                 align-items: center;
                 gap: 1.5rem;
-                p{
+
+                p {
                     display: flex;
                     align-items: center;
                     gap: 0.5rem;
                     color: var(--primary-color);
                     opacity: 0.8;
+                    margin: 0; /* Removed margin for better alignment */
+                }
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        flex-direction: column; /* Stack elements vertically on smaller screens */
+        align-items: flex-start; /* Align items to the start */
+        
+        .icon {
+            width: 60px;
+            height: 60px;
+        }
+
+        .content {
+            h5 {
+                font-size: 1.2rem; /* Smaller font size */
+            }
+
+            .inner-content {
+                flex-direction: column; /* Stack inner content */
+                align-items: flex-start; /* Align to start */
+            }
+        }
+    }
+
+    @media (max-width: 480px) {
+        padding: 0.5rem; /* Reduced padding */
+        
+        .icon {
+            width: 50px;
+            height: 50px;
+
+            i {
+                font-size: 2rem; /* Smaller icon size */
+            }
+        }
+
+        .content {
+            h5 {
+                font-size: 1rem; /* Smaller heading size */
+            }
+
+            .inner-content {
+                .text {
+                    gap: 1rem; /* Adjusted gap for smaller screens */
                 }
             }
         }

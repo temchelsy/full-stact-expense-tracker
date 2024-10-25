@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import './registration.css';
+import { toast } from "sonner";
 
 export const Registration = ({ onAuthenticate, onFormSwitch }) => {
     const [email, setEmail] = useState('');
@@ -83,13 +84,16 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
             }
 
             // Show success message and proceed to authenticate
-            setSuccessMessage('Registration successful! Redirecting to login...');
+            // setSuccessMessage('Registration successful! Redirecting to login...');
+            toast.success('Registration successful! Redirecting to login...')
+
             setTimeout(() => {
                 onAuthenticate(true, '/'); 
             }, 1500); // Redirect after 1.5 seconds
 
         } catch (error) {
-            setErrorMessage('An error occurred. Please try again.');
+            // setErrorMessage('An error occurred. Please try again.');
+            toast.error('An error occurred. Please try again')
             console.error('Error:', error.message);
         } finally {
             setIsLoading(false);
