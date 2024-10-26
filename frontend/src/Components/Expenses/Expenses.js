@@ -13,11 +13,20 @@ function Expenses() {
         getExpenses();
     }, []);
 
+   
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('fr-CM', {
+            style: 'currency',
+            currency: 'XAF', 
+            minimumFractionDigits: 0,
+        }).format(amount);
+    };
+
     return (
         <ExpenseStyled>
             <InnerLayout>
                 <h1>Expenses</h1>
-                <h2 className="total-income">Total Expense: <span>${totalExpenses()}</span></h2>
+                <h2 className="total-income">Total Expense: <span>{formatCurrency(totalExpenses())}</span></h2>
                 <div className="income-content">
                     <div className="form-container">
                         <ExpenseForm />
@@ -31,7 +40,7 @@ function Expenses() {
                                     id={_id}
                                     title={title}
                                     description={description}
-                                    amount={amount}
+                                    amount={formatCurrency(amount)}
                                     date={date}
                                     type={type}
                                     category={category}

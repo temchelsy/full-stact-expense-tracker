@@ -12,12 +12,21 @@ function Income() {
         getIncomes();
     }, []);
 
+    // Function to format amounts in FCFA currency
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('fr-CM', {
+            style: 'currency',
+            currency: 'XAF', // Central African CFA Franc
+            minimumFractionDigits: 0,
+        }).format(amount);
+    };
+
     return (
         <IncomeStyled>
             <InnerLayout>
                 <h1>Incomes</h1>
                 <h2 className="total-income">
-                    Total Income: <span>${totalIncome()}</span>
+                    Total Income: <span>{formatCurrency(totalIncome())}</span>
                 </h2>
                 <div className="income-content">
                     <div className="form-container">
@@ -32,7 +41,7 @@ function Income() {
                                     id={_id}
                                     title={title}
                                     description={description}
-                                    amount={amount}
+                                    amount={formatCurrency(amount)} // Format individual income amounts
                                     date={date}
                                     type={type}
                                     category={category}
