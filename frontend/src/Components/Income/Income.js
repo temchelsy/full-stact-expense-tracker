@@ -41,7 +41,7 @@ function Income() {
                                     id={_id}
                                     title={title}
                                     description={description}
-                                    amount={formatCurrency(amount)} // Format individual income amounts
+                                    amount={formatCurrency(amount)} 
                                     date={date}
                                     type={type}
                                     category={category}
