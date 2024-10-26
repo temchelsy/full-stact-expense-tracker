@@ -12,11 +12,11 @@ function Income() {
         getIncomes();
     }, []);
 
-    // Function to format amounts in FCFA currency
+   
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('fr-CM', {
             style: 'currency',
-            currency: 'XAF', // Central African CFA Franc
+            currency: 'XAF', 
             minimumFractionDigits: 0,
         }).format(amount);
     };
