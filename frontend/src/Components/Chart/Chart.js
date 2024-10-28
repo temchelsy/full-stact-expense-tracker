@@ -148,7 +148,7 @@ const ChartStyled = styled.div`
     canvas {
         width: 100% !important;
         height: 100% !important;
-        max-height: 100%; /* Keep the height within the container */
+        max-height: 100%; 
     }
 `;
 

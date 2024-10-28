@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useGlobalContext } from '../context/globalContext';
+import { Download } from 'lucide-react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { pdfDownload } from '../utils/Icons';
+import { useGlobalContext } from '../context/globalContext';
 
 const TransactionView = () => {
+    const [visibleTransactions, setVisibleTransactions] = useState(10);
     const { incomes, expenses } = useGlobalContext();
 
-    // Format amount to FCFA
     const formatAmount = (amount) => {
         return new Intl.NumberFormat('fr-FR', {
             style: 'currency',
@@ -18,11 +18,10 @@ const TransactionView = () => {
         }).format(amount);
     };
 
-    // Format date function
     const formatDate = (date) => {
         if (!date) return '';
         const dateObj = new Date(date);
-        if (isNaN(dateObj.getTime())) return ''; // Return empty string if invalid date
+        if (isNaN(dateObj.getTime())) return '';
         
         return dateObj.toLocaleDateString('fr-FR', {
             year: 'numeric',
@@ -31,20 +30,14 @@ const TransactionView = () => {
         });
     };
 
-    // Add type property to each transaction before combining
-    const formattedIncomes = incomes.map(income => ({
-        ...income,
-        transactionType: 'Income'
-    }));
-    
-    const formattedExpenses = expenses.map(expense => ({
-        ...expense,
-        transactionType: 'Expense'
-    }));
+    const transactions = [
+        ...incomes.map(income => ({ ...income, transactionType: 'Income' })),
+        ...expenses.map(expense => ({ ...expense, transactionType: 'Expense' }))
+    ].sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt));
 
-    // Combine and sort transactions
-    const transactions = [...formattedIncomes, ...formattedExpenses]
-        .sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt));
+    const showAllTransactions = () => {
+        setVisibleTransactions(transactions.length);
+    };
 
     const downloadPDF = () => {
         const doc = new jsPDF();
@@ -67,115 +60,158 @@ const TransactionView = () => {
     };
 
     return (
-        <TransactionViewStyled>
-            <div className="header">
-                <h2>All Transactions</h2>
-                <Button onClick={downloadPDF}>
-                    {pdfDownload} Download PDF
-                </Button>
-            </div>
+        <Container>
+            <Header>
+                <Title>All Transactions</Title>
+                {transactions.length > 0 && (
+                    <IconButton onClick={downloadPDF} title="Download PDF">
+                        <Download size={20} />
+                    </IconButton>
+                )}
+            </Header>
             <TableContainer>
                 <StyledTable>
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Description</th>
-                            <th>Amount (FCFA)</th>
-                            <th>Type</th>
+                            <TableHeader>Date</TableHeader>
+                            <TableHeader>Description</TableHeader>
+                            <TableHeader>Amount (FCFA)</TableHeader>
+                            <TableHeader>Type</TableHeader>
                         </tr>
                     </thead>
                     <tbody>
-                        {transactions.map(transaction => (
-                            <tr key={transaction._id}>
-                                <td>{formatDate(transaction.date || transaction.createdAt)}</td>
-                                <td>{transaction.description || transaction.title}</td>
-                                <td className="amount">{formatAmount(transaction.amount)}</td>
-                                <td>
+                        {transactions.slice(0, visibleTransactions).map(transaction => (
+                            <TableRow key={transaction._id}>
+                                <TableCell>{formatDate(transaction.date || transaction.createdAt)}</TableCell>
+                                <TableCell>{transaction.description || transaction.title}</TableCell>
+                                <TableCell className="amount">{formatAmount(transaction.amount)}</TableCell>
+                                <TableCell>
                                     <TransactionType type={transaction.transactionType}>
                                         {transaction.transactionType}
                                     </TransactionType>
-                                </td>
-                            </tr>
+                                </TableCell>
+                            </TableRow>
                         ))}
                     </tbody>
                 </StyledTable>
+                {visibleTransactions < transactions.length && (
+                    <SeeMoreButton onClick={showAllTransactions}>
+                        See More
+                    </SeeMoreButton>
+                )}
             </TableContainer>
-        </TransactionViewStyled>
+        </Container>
     );
 };
 
-const TransactionViewStyled = styled.div`
-    padding: 2rem;
-    
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
 
-        h2 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
+const Container = styled.div`
+    padding: 2rem;
+    max-width: 100%;
+    
+    @media (max-width: 768px) {
+        padding: 1rem;
     }
 `;
 
-const Button = styled.button`
+const Header = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    @media (max-width: 480px) {
+        flex-direction: column;
+        gap: 1rem;
+    }
+`;
+
+const Title = styled.h2`
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #2563eb;
+
+    @media (max-width: 480px) {
+        font-size: 1.5rem;
+    }
+`;
+
+const IconButton = styled.button`
+    background: transparent;
+    border: none;
+    color: #2563eb; 
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.7rem 1.2rem;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    justify-content: center; 
+    padding: 0; 
+    width: auto; 
+
+    &:hover {
+        background: transparent; 
+    }
+
+    &:focus {
+        outline: none; 
+    }
 `;
 
 const TableContainer = styled.div`
     width: 100%;
     overflow-x: auto;
     background: white;
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    @media (max-width: 768px) {
+        border-radius: 5px;
+    }
 `;
 
 const StyledTable = styled.table`
     width: 100%;
     border-collapse: collapse;
-    
-    thead {
-        background-color: #f8f9fa;
-        
-        th {
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: #495057;
-            border-bottom: 2px solid #dee2e6;
-        }
+    min-width: 600px;
+
+    @media (max-width: 768px) {
+        min-width: 100%;
+    }
+`;
+
+const TableHeader = styled.th`
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #4a5568;
+    border-bottom: 2px solid #e2e8f0;
+
+    @media (max-width: 768px) {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+`;
+
+const TableRow = styled.tr`
+    border-bottom: 1px solid #e2e8f0;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: #f7fafc;
+    }
+`;
+
+const TableCell = styled.td`
+    padding: 1rem;
+    color: #4a5568;
+
+    &.amount {
+        font-family: 'Courier New', monospace;
+        text-align: right;
     }
 
-    tbody {
-        tr {
-            border-bottom: 1px solid #dee2e6;
-            transition: background-color 0.2s ease;
-
-            &:hover {
-                background-color: #f8f9fa;
-            }
-        }
-
-        td {
-            padding: 1rem;
-            color: #495057;
-
-            &.amount {
-                font-family: 'Courier New', monospace;
-                text-align: right;
-            }
-        }
+    @media (max-width: 768px) {
+        padding: 0.75rem;
+        font-size: 0.9rem;
     }
 `;
 
@@ -184,14 +220,30 @@ const TransactionType = styled.span`
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 500;
-    
-    ${props => props.type === 'Income' ? `
-        background-color: #d4edda;
-        color: #155724;
-    ` : `
-        background-color: #f8d7da;
-        color: #721c24;
-    `}
+    color: ${({ type }) => (type === 'Income' ? '#155724' : '#721c24')};
+    background-color: ${({ type }) => (type === 'Income' ? '#d4edda' : '#f8d7da')};
+`;
+
+const SeeMoreButton = styled.button`
+    margin: 1rem auto;
+    display: block;
+    padding: 0.6rem 1.2rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+
+    &:hover {
+        background: #1e3a8a;
+    }
+
+    @media (max-width: 480px) {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
 `;
 
 export default TransactionView;

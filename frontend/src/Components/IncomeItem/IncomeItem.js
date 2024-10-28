@@ -202,18 +202,18 @@ const IncomeItemStyled = styled.div`
             height: 50px;
 
             i {
-                font-size: 2rem; /* Smaller icon size */
+                font-size: 2rem; 
             }
         }
 
         .content {
             h5 {
-                font-size: 1rem; /* Smaller heading size */
+                font-size: 1rem; 
             }
 
             .inner-content {
                 .text {
-                    gap: 1rem; /* Adjusted gap for smaller screens */
+                    gap: 1rem; 
                 }
             }
         }

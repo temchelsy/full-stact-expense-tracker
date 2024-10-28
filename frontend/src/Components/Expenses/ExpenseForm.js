@@ -131,9 +131,9 @@ const FormStyled = styled.form`
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    max-width: 500px;  /* Limit the maximum width */
-    width: 100%;  /* Allow it to shrink on smaller screens */
-    margin: 0 auto;  /* Center the form */
+    max-width: 500px;  
+    width: 100%;  
+    margin: 0 auto; 
 
     .error {
         color: red;
