@@ -3,18 +3,38 @@ import styled from 'styled-components';
 import { signout } from '../../utils/Icons';
 import { menuItems } from '../../utils/menuItems';
 import { useGlobalContext } from '../../context/globalContext';
-import { Link } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 
 function Navigation({ active, setActive }) {
     const { handleLogout } = useGlobalContext();
-    const [lastName, setLastName] = useState(localStorage.getItem('lastName'));
-    const [isMenuOpen, setIsMenuOpen] = useState(false); // State to manage menu visibility
+    const [lastName, setLastName] = useState(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
-        const storedLastName = localStorage.getItem('lastName');
-        if (storedLastName) {
-            setLastName(storedLastName);
-        }
+        const fetchCurrentUser = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
+            try {
+                const response = await fetch('https://full-stact-expense-tracker.onrender.com/api/v1/current', {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                const data = await response.json();
+                if (data.status === "success") {
+                    setLastName(data.user.lastName);
+                } else {
+                    console.error("Failed to fetch user data:", data.message);
+                }
+            } catch (error) {
+                console.error("Error fetching current user data:", error);
+            }
+        };
+
+        fetchCurrentUser();
     }, []);
 
     const toggleMenu = () => {
@@ -29,29 +49,36 @@ function Navigation({ active, setActive }) {
                     <p>Your Money</p>
                 </div>
                 <button className="hamburger" onClick={toggleMenu}>
-                    &#9776; {/* Hamburger icon */}
+                    &#9776;
                 </button>
             </div>
-            <ul className={`menu-items ${isMenuOpen ? 'open' : ''}`}>
-                {menuItems.map((item) => (
-                    <li
-                        key={item.id}
-                        className={active === item.id ? 'active' : ''}
-                    >
-                        <Link 
-                            to={item.link} 
-                            onClick={() => {
-                                setActive(item.id);
-                                setIsMenuOpen(false); // Close menu on item click
-                            }} 
-                            style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}
+            {isMenuOpen && ( // Only show menu items if isMenuOpen is true
+                <ul className={`menu-items ${isMenuOpen ? 'open' : ''}`}>
+                    {menuItems.map((item) => (
+                        <li
+                            key={item.id}
+                            className={active === item.id ? 'active' : ''}
                         >
-                            {item.icon}
-                            <span>{item.title}</span>
-                        </Link>
-                    </li>
-                ))}
-            </ul>
+                            <Link
+                                to={item.link}
+                                onClick={() => {
+                                    setActive(item.id);
+                                    setIsMenuOpen(false); // Close menu after clicking a link
+                                }}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    textDecoration: 'none',
+                                    color: 'inherit',
+                                }}
+                            >
+                                {item.icon}
+                                <span>{item.title}</span>
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
+            )}
             <div className="bottom-nav">
                 <li onClick={handleLogout}>
                     {signout} Sign Out
@@ -63,7 +90,7 @@ function Navigation({ active, setActive }) {
 
 const NavStyled = styled.nav`
     padding: 2rem 1.5rem;
-    width: 374px; /* Fixed width for larger screens */
+    width: 374px;
     height: 100%;
     background: rgba(252, 246, 249, 0.78);
     border: 3px solid #FFFFFF;
@@ -75,17 +102,17 @@ const NavStyled = styled.nav`
     gap: 2rem;
 
     .user-con {
-        height: 100px;
         display: flex;
         align-items: center;
-        gap: 1rem;
-        
+        justify-content: space-between;
+        height: 100px;
+
         .hamburger {
-            display: none; /* Hide hamburger button by default */
             background: none;
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
+            display: none;
         }
 
         h2 {
@@ -97,13 +124,12 @@ const NavStyled = styled.nav`
     }
 
     .menu-items {
-        flex: 1;
         display: flex;
         flex-direction: column;
         transition: max-height 0.3s ease;
-
+        
         &.open {
-            max-height: 500px; /* Adjust based on menu items */
+            max-height: 500px;
         }
 
         li {
@@ -148,43 +174,27 @@ const NavStyled = styled.nav`
         }
     }
 
-    /* Responsive Styles */
     @media (max-width: 768px) {
-        width: 100%; /* Full width on smaller screens */
-        padding: 1.5rem 1rem; /* Adjust padding for smaller screens */
-
+        width: 100%;
+        padding: 1.5rem 1rem;
         .user-con {
-            height: 80px; /* Adjust user container height */
-            justify-content: space-between; /* Space between user text and hamburger */
             .hamburger {
-                display: block; /* Show hamburger button on mobile */
+                display: block;
             }
         }
 
         .menu-items {
-            li {
-                margin: 0.4rem 0; /* Reduce margin between items */
-                font-size: 0.9rem; /* Adjust font size for smaller screens */
-            }
-        }
-
-        .bottom-nav {
-            li {
-                font-size: 0.9rem; /* Adjust font size for sign-out */
-            }
+            max-height: ${props => (props.isMenuOpen ? '300px' : '0')}; /* Collapsible height */
+            overflow: hidden;
+            transition: max-height 0.4s ease;
         }
     }
 
     @media (max-width: 480px) {
-        padding: 1rem; /* Further reduce padding for very small screens */
-
-        .user-con {
-            height: 60px; /* Further adjust user container height */
-        }
-
+        padding: 1rem;
         .menu-items {
             li {
-                font-size: 0.8rem; /* Further adjust font size */
+                font-size: 0.8rem;
             }
         }
     }
