@@ -52,7 +52,7 @@ function Navigation({ active, setActive }) {
                     &#9776;
                 </button>
             </div>
-            {isMenuOpen && ( // Only show menu items if isMenuOpen is true
+            {isMenuOpen && (
                 <ul className={`menu-items ${isMenuOpen ? 'open' : ''}`}>
                     {menuItems.map((item) => (
                         <li
@@ -63,7 +63,7 @@ function Navigation({ active, setActive }) {
                                 to={item.link}
                                 onClick={() => {
                                     setActive(item.id);
-                                    setIsMenuOpen(false); // Close menu after clicking a link
+                                    setIsMenuOpen(false);
                                 }}
                                 style={{
                                     display: 'flex',
@@ -77,13 +77,11 @@ function Navigation({ active, setActive }) {
                             </Link>
                         </li>
                     ))}
+                    <li onClick={handleLogout} className="signout">
+                        {signout} Sign Out
+                    </li>
                 </ul>
             )}
-            <div className="bottom-nav">
-                <li onClick={handleLogout}>
-                    {signout} Sign Out
-                </li>
-            </div>
         </NavStyled>
     );
 }
@@ -156,20 +154,18 @@ const NavStyled = styled.nav`
             span {
                 margin-left: 1rem;
             }
-        }
-    }
 
-    .bottom-nav {
-        li {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: rgba(34, 34, 96, 0.6);
-            transition: color 0.3s ease;
-            
-            &:hover {
-                color: rgba(34, 34, 96, 1);
+            &.signout {
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: rgba(34, 34, 96, 0.6);
+                transition: color 0.3s ease;
+
+                &:hover {
+                    color: rgba(34, 34, 96, 1);
+                }
             }
         }
     }
@@ -177,14 +173,21 @@ const NavStyled = styled.nav`
     @media (max-width: 768px) {
         width: 100%;
         padding: 1.5rem 1rem;
+
         .user-con {
+            position: relative;
+
             .hamburger {
                 display: block;
+                position: absolute;
+                top: 0;
+                right: 0;
+                color: blue;
             }
         }
 
         .menu-items {
-            max-height: ${props => (props.isMenuOpen ? '300px' : '0')}; /* Collapsible height */
+            max-height: ${props => (props.isMenuOpen ? '300px' : '0')};
             overflow: hidden;
             transition: max-height 0.4s ease;
         }
