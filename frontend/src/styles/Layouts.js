@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 export const MainLayout = styled.div`
+    font-family: 'Roboto', sans-serif; /* Apply Roboto font */
     padding: 2rem;
     min-height: 100vh;
     display: flex;
@@ -25,9 +26,10 @@ export const MainLayout = styled.div`
 `;
 
 export const InnerLayout = styled.div`
+    font-family: 'Roboto', sans-serif; /* Apply Roboto font */
     padding: 2rem;
     width: 100%;
-    max-width: 100%; // Ensure full width at smaller breakpoints
+    max-width: 100%;
     background: #ffffff;
     border-radius: 1rem;
     box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);

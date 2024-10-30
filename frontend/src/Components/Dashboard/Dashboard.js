@@ -27,35 +27,30 @@ function Dashboard() {
             <InnerLayout>
                 <h1>All Transactions</h1>
                 <div className="stats-con">
-                    <div className="chart-con">
-                        <Chart />
-                        <div className="amount-con">
-                            <div className="income">
-                                <h2>Total Income</h2>
-                                <p>{formatNumber(totalIncome())}</p>
-                            </div>
-                            <div className="expense">
-                                <h2>Total Expense</h2>
-                                <p>{formatNumber(totalExpenses())}</p>
-                            </div>
-                            <div className="balance">
-                                <h2>Total Balance</h2>
-                                <p>{formatNumber(totalBalance())}</p>
-                            </div>
+                    {/* Summary Stats */}
+                    <div className="amount-con">
+                        <div className="income">
+                            <h2>Total Income</h2>
+                            <p>{formatNumber(totalIncome())}</p>
+                        </div>
+                        <div className="expense">
+                            <h2>Total Expense</h2>
+                            <p>{formatNumber(totalExpenses())}</p>
+                        </div>
+                        <div className="balance">
+                            <h2>Total Balance</h2>
+                            <p>{formatNumber(totalBalance())}</p>
                         </div>
                     </div>
+
+                    {/* Chart Component */}
+                    <div className="chart-con">
+                        <Chart />
+                    </div>
+
+                    {/* History Section for Recent Transactions */}
                     <div className="history-con">
                         <History />
-                        <h2 className="salary-title">Min <span>Income</span> Max</h2>
-                        <div className="salary-item">
-                            <p>{formatNumber(Math.min(...incomes.map(item => item.amount)))}</p>
-                            <p>{formatNumber(Math.max(...incomes.map(item => item.amount)))}</p>
-                        </div>
-                        <h2 className="salary-title">Min <span>Expense</span> Max</h2>
-                        <div className="salary-item">
-                            <p>{formatNumber(Math.min(...expenses.map(item => item.amount)))}</p>
-                            <p>{formatNumber(Math.max(...expenses.map(item => item.amount)))}</p>
-                        </div>
                     </div>
                 </div>
             </InnerLayout>
@@ -64,72 +59,67 @@ function Dashboard() {
 }
 
 const DashboardStyled = styled.div`
+    font-family: 'Sans-Serif', 'Nunito', sans-serif; /* Apply sans-serif font */
+
     .stats-con {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: 2rem;
 
         @media (max-width: 1200px) {
             grid-template-columns: 1fr; /* Stack all items on small screens */
         }
 
-        .chart-con {
-            grid-column: 1 / 4; /* Chart takes the first 3 columns */
-            height: auto; /* Allow for natural height */
+        .amount-con {
+            grid-column: 1 / -1; /* Full width for amount section */
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
 
             @media (max-width: 1200px) {
-                grid-column: 1 / -1; /* Full width on smaller screens */
+                flex-direction: column; /* Stack on small screens */
             }
 
-            .amount-con {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 2rem;
-                margin-top: 2rem;
+            .income, .expense, .balance {
+                background: #FCF6F9;
+                border: 2px solid #FFFFFF;
+                box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
+                border-radius: 20px;
+                padding: 1rem;
+                flex: 1; /* Allow items to take equal width */
+                margin-right: 1rem; /* Space between items */
+                min-width: 200px; /* Ensure minimum width for readability */
 
-                @media (max-width: 1200px) {
-                    grid-template-columns: 1fr; /* Stack on small screens */
-                    gap: 1.5rem;
+                h2 {
+                    font-size: 1.5rem;
+                    margin-bottom: 0.5rem;
                 }
 
-                .income, .expense, .balance {
-                    background: #FCF6F9;
-                    border: 2px solid #FFFFFF;
-                    box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
-                    border-radius: 20px;
-                    padding: 1rem;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: space-between;
-                    height: 100%;
-
-                    h2 {
-                        font-size: 1.5rem;
-                        margin-bottom: 0.5rem;
-                    }
-
-                    p {
-                        font-size: 1.8rem;
-                        font-weight: 700;
-                        word-break: break-word;
-                    }
+                p {
+                    font-size: 1.8rem;
+                    font-weight: 700;
+                    word-break: break-word;
                 }
+            }
 
-                .balance p {
-                    color: var(--color-green);
-                    opacity: 0.6;
-                }
+            .income, .expense {
+                margin-right: 1rem; /* Space only between income and expense */
+            }
+
+            .balance {
+                color: var(--color-green);
+                opacity: 0.6;
             }
         }
 
-        .history-con {
-            grid-column: 4 / -1; /* History takes the last column */
+        .chart-con {
+            grid-column: 1 / -1; /* Full width for chart */
             height: auto; /* Allow for natural height */
-            margin-top: 20px; /* Add space to avoid overlap */
+        }
 
-            @media (max-width: 1200px) {
-                grid-column: 1 / -1; /* Full width on smaller screens */
-            }
+        .history-con {
+            grid-column: 1 / -1; /* Full width for history */
+            margin-top: 20px; /* Add space to avoid overlap */
 
             h2 {
                 margin: 1rem 0;
@@ -137,31 +127,9 @@ const DashboardStyled = styled.div`
                 align-items: center;
                 justify-content: space-between;
             }
-
-            .salary-title {
-                font-size: 1.2rem;
-                span {
-                    font-size: 1.8rem;
-                }
-            }
-
-            .salary-item {
-                background: #FCF6F9;
-                border: 2px solid #FFFFFF;
-                box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
-                padding: 1rem;
-                border-radius: 20px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-
-                p {
-                    font-weight: 600;
-                    font-size: 1.4rem;
-                }
-            }
         }
     }
 `;
 
 export default Dashboard;
+                                       

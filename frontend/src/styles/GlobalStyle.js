@@ -1,6 +1,9 @@
 import { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyle = createGlobalStyle`
+    /* Importing Roboto font */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
     * {
         margin: 0;
         padding: 0;
@@ -9,13 +12,13 @@ export const GlobalStyle = createGlobalStyle`
     }
 
     :root {
-        --primary-color: #222260;
-        --primary-color2: rgba(34, 34, 96, .6);
-        --primary-color3: rgba(34, 34, 96, .4);
-        --color-green: #42AD00;
-        --color-grey: #aaa;
-        --color-accent: #F56692;
-        --color-delete: #FF0000;
+        --primary-color: #1E2A38; /* Darker, modern blue-grey */
+        --primary-color2: rgba(30, 42, 56, 0.8); /* Softer primary color for subtle text */
+        --primary-color3: rgba(30, 42, 56, 0.6); /* Lighter shade for low emphasis */
+        --color-green: #42AD00; /* Retain for positive balances */
+        --color-grey: #d3d6db; /* Light grey for backgrounds */
+        --color-accent: #FF8A80; /* Softer pink for action highlights */
+        --color-delete: #D32F2F; /* Muted red for delete or error actions */
     }
 
     html, body {
@@ -24,6 +27,7 @@ export const GlobalStyle = createGlobalStyle`
         margin: 0;   
         padding: 0;  
         font-size: 16px;
+        font-family: 'Roboto', sans-serif;
         overflow-x: hidden;
 
         @media screen and (max-width: 768px) {
@@ -36,7 +40,6 @@ export const GlobalStyle = createGlobalStyle`
     }
 
     body {
-        font-family: 'Nunito', sans-serif;
         font-size: 1rem;
         color: var(--primary-color2);
         line-height: 1.5;
@@ -45,6 +48,8 @@ export const GlobalStyle = createGlobalStyle`
         justify-content: center; 
         min-height: 100vh; 
         max-width: 100vw;
+        font-family: 'Roboto', sans-serif;
+        background-color: var(--color-grey);
     }
         
     #root {

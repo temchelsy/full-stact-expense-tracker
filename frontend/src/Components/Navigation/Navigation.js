@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 function Navigation({ active, setActive }) {
     const { handleLogout } = useGlobalContext();
     const [lastName, setLastName] = useState(localStorage.getItem('lastName'));
+    const [isMenuOpen, setIsMenuOpen] = useState(false); // State to manage menu visibility
 
     useEffect(() => {
         const storedLastName = localStorage.getItem('lastName');
@@ -16,15 +17,22 @@ function Navigation({ active, setActive }) {
         }
     }, []);
 
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
+
     return (
-        <NavStyled>
+        <NavStyled isMenuOpen={isMenuOpen}>
             <div className="user-con">
                 <div className="text">
                     <h2>{lastName ? lastName : 'User'}</h2>
                     <p>Your Money</p>
                 </div>
+                <button className="hamburger" onClick={toggleMenu}>
+                    &#9776; {/* Hamburger icon */}
+                </button>
             </div>
-            <ul className="menu-items">
+            <ul className={`menu-items ${isMenuOpen ? 'open' : ''}`}>
                 {menuItems.map((item) => (
                     <li
                         key={item.id}
@@ -32,7 +40,10 @@ function Navigation({ active, setActive }) {
                     >
                         <Link 
                             to={item.link} 
-                            onClick={() => setActive(item.id)} 
+                            onClick={() => {
+                                setActive(item.id);
+                                setIsMenuOpen(false); // Close menu on item click
+                            }} 
                             style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}
                         >
                             {item.icon}
@@ -68,6 +79,15 @@ const NavStyled = styled.nav`
         display: flex;
         align-items: center;
         gap: 1rem;
+        
+        .hamburger {
+            display: none; /* Hide hamburger button by default */
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
         h2 {
             color: rgba(34, 34, 96, 1);
         }
@@ -80,6 +100,11 @@ const NavStyled = styled.nav`
         flex: 1;
         display: flex;
         flex-direction: column;
+        transition: max-height 0.3s ease;
+
+        &.open {
+            max-height: 500px; /* Adjust based on menu items */
+        }
 
         li {
             margin: 0.6rem 0;
@@ -130,6 +155,10 @@ const NavStyled = styled.nav`
 
         .user-con {
             height: 80px; /* Adjust user container height */
+            justify-content: space-between; /* Space between user text and hamburger */
+            .hamburger {
+                display: block; /* Show hamburger button on mobile */
+            }
         }
 
         .menu-items {
