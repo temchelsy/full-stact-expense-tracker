@@ -76,7 +76,7 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
     return (
         <div className="background-container">
             <div className="form-container">
-                <h2>Login</h2>
+                <h2>Login to Expense Ease</h2>
                 {errorMessage && <p className="error-message">{errorMessage}</p>}
                 {successMessage && <p className="success-message">{successMessage}</p>}
                 <form className="login-form" onSubmit={handleSubmit}>

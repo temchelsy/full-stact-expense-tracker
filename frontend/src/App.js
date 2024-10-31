@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import bg from './img/bg.png';
 import { MainLayout } from './styles/Layouts';
 import { Toaster } from 'sonner';
 import Navigation from './Components/Navigation/Navigation';
@@ -41,14 +40,13 @@ function App() {
     };
 
     return (
-        <AppStyled bg={bg} className="App">
+        <AppStyled className="App">
             <Toaster richColors />
             <MainLayout>
                 {isAuthenticated ? (
                     <>
                         <Navigation active={active} setActive={setActive} />
                         <main>
-                            
                             <Routes>
                                 <Route path="/" element={<Dashboard />} />
                                 <Route path="/income" element={<Income />} />
@@ -70,7 +68,6 @@ function App() {
 
 const AppStyled = styled.div`
     height: 100vh;
-    background-image: url(${(props) => props.bg});
 
     main {
         flex: 1;
@@ -79,6 +76,7 @@ const AppStyled = styled.div`
         backdrop-filter: blur(4.5px);
         border-radius: 32px;
         overflow-x: hidden;
+
         &::-webkit-scrollbar {
             width: 0;
         }

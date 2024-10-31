@@ -72,13 +72,14 @@ const TransactionView = () => {
             <TableContainer>
                 <StyledTable>
                     <thead>
-                        <tr>
-                            <TableHeader>Date</TableHeader>
-                            <TableHeader>Description</TableHeader>
-                            <TableHeader>Amount (FCFA)</TableHeader>
-                            <TableHeader>Type</TableHeader>
-                        </tr>
-                    </thead>
+    <tr>
+        <TableHeader>Date</TableHeader>
+        <TableHeader>Description</TableHeader>
+        <TableHeader>Amount (XAF)</TableHeader> 
+        <TableHeader>Type</TableHeader>
+    </tr>
+</thead>
+
                     <tbody>
                         {transactions.slice(0, visibleTransactions).map(transaction => (
                             <TableRow key={transaction._id}>
