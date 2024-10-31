@@ -9,6 +9,7 @@ function Navigation({ active, setActive }) {
     const { handleLogout } = useGlobalContext();
     const [lastName, setLastName] = useState(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
     useEffect(() => {
         const fetchCurrentUser = async () => {
@@ -32,6 +33,12 @@ function Navigation({ active, setActive }) {
             }
         };
         fetchCurrentUser();
+
+        // Update isMobile on window resize
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener("resize", handleResize);
+
+        return () => window.removeEventListener("resize", handleResize);
     }, []);
 
     const toggleMenu = () => {
@@ -46,7 +53,7 @@ function Navigation({ active, setActive }) {
                     <p>Your Money</p>
                 </div>
                 <button className="hamburger" onClick={toggleMenu}>
-                    &#9776; {/* Hamburger icon */}
+                    &#9776; 
                 </button>
             </div>
             <ul className={`menu-items ${isMenuOpen ? 'open' : ''}`}>
@@ -68,10 +75,17 @@ function Navigation({ active, setActive }) {
                         </Link>
                     </li>
                 ))}
+                {/* Conditionally render logout in menu on mobile view */}
+                {isMobile && (
+                    <li onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', color: 'rgba(34, 34, 96, 0.6)' }}>
+                        {signout} <span>Sign Out</span>
+                    </li>
+                )}
             </ul>
+            {/* Always show logout button in bottom-nav for desktop */}
             <div className="bottom-nav">
-                <li onClick={handleLogout}>
-                    {signout} Sign Out
+                <li onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', color: 'rgba(34, 34, 96, 0.6)' }}>
+                    {signout} <span>Sign Out</span>
                 </li>
             </div>
         </NavStyled>
@@ -193,24 +207,12 @@ const NavStyled = styled.nav`
         }
 
         .bottom-nav {
-            li {
-                font-size: 0.9rem; /* Adjust font size for sign-out */
-            }
+            display: none; /* Hide bottom-nav on mobile */
         }
     }
 
     @media (max-width: 480px) {
-        padding: 1rem; /* Further reduce padding for very small screens */
-
-        .user-con {
-            height: 60px; /* Further adjust user container height */
-        }
-
-        .menu-items {
-            li {
-                font-size: 0.8rem; /* Further adjust font size */
-            }
-        }
+        padding: 1rem;
     }
 `;
 

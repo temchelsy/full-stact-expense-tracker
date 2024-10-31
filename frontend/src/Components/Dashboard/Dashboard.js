@@ -27,28 +27,23 @@ function Dashboard() {
             <InnerLayout>
                 <h1>All Transactions</h1>
                 <div className="stats-con">
-                    {/* Summary Stats */}
                     <div className="amount-con">
-                        <div className="income">
+                        <div className="stat-item income">
                             <h2>Total Income</h2>
                             <p>{formatNumber(totalIncome())}</p>
                         </div>
-                        <div className="expense">
+                        <div className="stat-item expense">
                             <h2>Total Expense</h2>
                             <p>{formatNumber(totalExpenses())}</p>
                         </div>
-                        <div className="balance">
+                        <div className="stat-item balance">
                             <h2>Total Balance</h2>
                             <p>{formatNumber(totalBalance())}</p>
                         </div>
                     </div>
-
-                    {/* Chart Component */}
                     <div className="chart-con">
                         <Chart />
                     </div>
-
-                    {/* History Section for Recent Transactions */}
                     <div className="history-con">
                         <History />
                     </div>
@@ -59,77 +54,118 @@ function Dashboard() {
 }
 
 const DashboardStyled = styled.div`
-    font-family: 'Sans-Serif', 'Nunito', sans-serif; /* Apply sans-serif font */
+    font-family: 'Nunito', sans-serif;
 
     .stats-con {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        display: flex;
+        flex-direction: column;
         gap: 2rem;
 
-        @media (max-width: 1200px) {
-            grid-template-columns: 1fr; /* Stack all items on small screens */
-        }
-
         .amount-con {
-            grid-column: 1 / -1; /* Full width for amount section */
             display: flex;
             justify-content: space-between;
-            margin-bottom: 2rem;
+            gap: 1rem;
+            flex-wrap: wrap;
 
-            @media (max-width: 1200px) {
-                flex-direction: column; /* Stack on small screens */
-            }
-
-            .income, .expense, .balance {
-                background: #FCF6F9;
-                border: 2px solid #FFFFFF;
-                box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
+            .stat-item {
+                background: #f7f9fc; /* Light gray background for stat items */
+                border: 2px solid #e3e6ee; /* Soft border color */
+                box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.1);
                 border-radius: 20px;
-                padding: 1rem;
-                flex: 1; /* Allow items to take equal width */
-                margin-right: 1rem; /* Space between items */
-                min-width: 200px; /* Ensure minimum width for readability */
+                padding: 1.5rem;
+                flex: 1;
+                min-width: 240px;
+                text-align: center;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+                &:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.15);
+                }
 
                 h2 {
-                    font-size: 1.5rem;
+                    font-size: 1.3rem;
                     margin-bottom: 0.5rem;
+                    font-weight: 600;
+                    color: #333; /* Darker text color */
                 }
 
                 p {
-                    font-size: 1.8rem;
+                    font-size: 1.6rem;
                     font-weight: 700;
-                    word-break: break-word;
                 }
             }
 
-            .income, .expense {
-                margin-right: 1rem; /* Space only between income and expense */
+            .income {
+                color: #28a745; /* Green for income */
+            }
+
+            .expense {
+                color: #dc3545; /* Red for expense */
             }
 
             .balance {
-                color: var(--color-green);
-                opacity: 0.6;
+                color: #17a2b8; /* Teal for balance */
             }
         }
 
         .chart-con {
-            grid-column: 1 / -1; /* Full width for chart */
-            height: auto; /* Allow for natural height */
+            background: #ffffff; /* White background for the chart */
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
         }
 
         .history-con {
-            grid-column: 1 / -1; /* Full width for history */
-            margin-top: 20px; /* Add space to avoid overlap */
+            background: #ffffff; /* White background for history */
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.08);
+            margin-top: 1.5rem;
 
             h2 {
-                margin: 1rem 0;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
+                font-size: 1.2rem;
+                font-weight: 600;
+                color: #333; /* Darker text color for history title */
+                margin-bottom: 1rem;
             }
+        }
+    }
+
+    /* Responsive Styling */
+    @media (max-width: 992px) {
+        .amount-con {
+            flex-direction: column;
+            align-items: center;
+            .stat-item {
+                min-width: 80%;
+                margin-bottom: 1rem;
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        .stats-con {
+            gap: 1.5rem;
+        }
+        .chart-con, .history-con {
+            padding: 1rem;
+        }
+        .amount-con .stat-item p {
+            font-size: 1.4rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        h1 {
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        .amount-con .stat-item {
+            padding: 1rem;
         }
     }
 `;
 
 export default Dashboard;
-                                       
