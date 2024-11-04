@@ -50,7 +50,7 @@ function Navigation({ active, setActive }) {
             <div className="user-con">
                 <div className="text">
                     <h2>{lastName ? lastName : 'User'}</h2>
-                    <p>Your Money</p>
+                    
                 </div>
                 <button className="hamburger" onClick={toggleMenu}>
                     &#9776; 
