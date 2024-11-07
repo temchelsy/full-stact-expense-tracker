@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState('');
@@ -9,7 +9,7 @@ const ResetPassword = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const { token } = useParams(); // Token from URL
-  const history = useHistory();
+  const history = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();

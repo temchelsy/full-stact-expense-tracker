@@ -11,6 +11,7 @@ import { useGlobalContext } from './context/globalContext';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Authentification from './Components/Auth/auth';
 import ForgotPassword from './Components/Auth/ForgotPassword';
+import ResetPassword from './Components/Auth/ResetPassword';
 
 function App() {
     const [active, setActive] = useState(1);
@@ -66,6 +67,11 @@ function App() {
                         <Route 
                             path="/forgot-password" 
                             element={<ForgotPassword />} 
+                        />
+
+<Route 
+                            path="/reset-password" 
+                            element={<ResetPassword />} 
                         />
                         <Route 
                             path="*" 
