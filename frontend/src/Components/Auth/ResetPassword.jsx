@@ -19,7 +19,7 @@ const ResetPassword = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8000/api/v1/reset-password', { token, newPassword });
+      const response = await axios.post('https://full-stact-expense-tracker.onrender.com/reset-password', { token, newPassword });
       setMessage(response.data.message);
       setError('');
       // Redirect to login page after successful password reset
