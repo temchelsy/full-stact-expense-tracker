@@ -113,6 +113,13 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                 <button className="link-btn" onClick={() => onFormSwitch('register')}>
                     Don't have an account? Register here.
                 </button>
+                {/* Forgot Password Link */}
+                <button
+                    className="link-btn"
+                    onClick={() => navigate('/forgot-password')}
+                >
+                    Forgot Password?
+                </button>
             </div>
         </div>
     );

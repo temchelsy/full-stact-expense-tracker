@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
+import { sendEmail } from '../utils/sendEmail.js';
 
 // Utility functions
 const hashPassword = async (userValue) => {
@@ -13,8 +14,8 @@ const hashPassword = async (userValue) => {
 const createResetToken = (userId) => {
   return jwt.sign(
     { userId: userId },
-    process.env.JWT_SECRET, // Make sure to set a separate JWT secret for reset tokens if needed
-    { expiresIn: "1d" } // Token will expire in 1 hour
+    process.env.JWT_SECRET, 
+    { expiresIn: "1d" } 
   );
 };
 
@@ -169,24 +170,30 @@ export const forgotPassword = async (req, res) => {
     // Generate the reset token
     const resetToken = createResetToken(user._id);
 
-    // Optionally, store the token and expiration on the user record
+    // Set the reset token and expiration time in the user document
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour expiration
     await user.save();
 
-    // Send the token to the user's email or return it as a response for testing
-    // You could integrate an email service here, e.g., Nodemailer
+    // Generate reset password URL
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+    // Send email with reset password link using the sendEmail utility
+    const emailSubject = 'Password Reset Request';
+    const emailBody = `Click the link to reset your password: ${resetUrl}`;
+
+    // Send the email
+    await sendEmail(user.email, emailSubject, emailBody);
+
     res.status(200).json({
       status: "success",
-      message: "Password reset link has been sent.",
-      resetToken, // For testing purposes, but don't include in production response
+      message: "Password reset link has been sent to your email address.",
     });
   } catch (error) {
     console.error("Error in forgot password:", error);
     res.status(500).json({ status: "failed", message: "Internal server error." });
   }
 };
-
 // Controller for Reset Password
 export const resetPassword = async (req, res) => {
   try {

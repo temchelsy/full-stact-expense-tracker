@@ -1,58 +1,42 @@
+
 import React, { useState } from 'react';
-import { toast } from 'sonner';
+import axios from 'axios';
 
 const ForgotPassword = () => {
-    const [email, setEmail] = useState('');
-    const [message, setMessage] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
-    const handleForgotPassword = async (e) => {
-        e.preventDefault();
-        setMessage('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:8000/api/v1/forgot-password', { email });
+      setMessage(response.data.message);
+      setError('');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Something went wrong');
+      setMessage('');
+    }
+  };
 
-        if (!email) {
-            setMessage('Please enter your email address.');
-            return;
-        }
+  return (
+    <div>
+      <h2>Forgot Password</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter your email"
+          required
+        />
+        <button type="submit">Submit</button>
+      </form>
 
-        try {
-            const response = await fetch('https://full-stact-expense-tracker.onrender.com/api/v1/forgot-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email }),
-            });
-
-            if (response.ok) {
-                setMessage('Password reset link sent to your email.');
-                toast.success('Password reset email sent!');
-            } else {
-                const errorData = await response.json();
-                setMessage(errorData.error || 'Failed to send password reset email.');
-            }
-        } catch (error) {
-            setMessage('An error occurred. Please try again.');
-            toast.error('Failed to send password reset email.');
-        }
-    };
-
-    return (
-        <div className="form-container">
-            <h2>Forgot Password</h2>
-            {message && <p>{message}</p>}
-            <form onSubmit={handleForgotPassword}>
-                <label htmlFor="email">Enter your email</label>
-                <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="youremail@gmail.com"
-                    required
-                />
-                <button type="submit">Send Password Reset Link</button>
-            </form>
-        </div>
-    );
+      {message && <p>{message}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+    </div>
+  );
 };
 
 export default ForgotPassword;
