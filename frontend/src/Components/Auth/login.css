@@ -126,3 +126,18 @@ button:hover {
         height: 25px;
     }
 }
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Adjust the gap as needed */
+    margin-top: 10px;
+}
+
+.forgot-password {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 0.9em;
+}

@@ -36,12 +36,10 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
             if (response.ok) {
                 const data = await response.json();
                 
-                // Log the entire response to check for the token
                 console.log('Server Response:', data);
                 
                 if (data.token) {
-                    // setSuccessMessage('Login successful!');
-                    toast.success('login successful')
+                    toast.success('Login successful!');
 
                     // Store the token in localStorage
                     localStorage.setItem('token', data.token);
@@ -58,16 +56,14 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                 } else {
                     setErrorMessage('Login successful, but no token received. Please try again.');
                 }
-
             } else {
                 const errorData = await response.json();
-                // setErrorMessage(errorData.error || 'Login failed. Please try again.');
-                
+                setErrorMessage(errorData.error || 'Login failed. Please try again.');
             }
         } catch (error) {
             setErrorMessage('An error occurred. Please try again.');
             console.error('Error:', error.message);
-            toast.error('login failed')
+            toast.error('Login failed');
         } finally {
             setIsLoading(false);
         }
@@ -116,6 +112,13 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                 </form>
                 <button className="link-btn" onClick={() => onFormSwitch('register')}>
                     Don't have an account? Register here.
+                </button>
+                {/* Forgot Password Link */}
+                <button
+                    className="link-btn"
+                    onClick={() => navigate('/forgot-password')}
+                >
+                    Forgot Password?
                 </button>
             </div>
         </div>
