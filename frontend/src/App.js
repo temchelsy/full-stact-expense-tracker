@@ -10,6 +10,7 @@ import TransactionView from './Components/transaction';
 import { useGlobalContext } from './context/globalContext';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Authentification from './Components/Auth/auth';
+import ForgotPassword from './Components/Auth/ForgotPassword';
 
 function App() {
     const [active, setActive] = useState(1);
@@ -58,7 +59,18 @@ function App() {
                     </>
                 ) : (
                     <Routes>
-                        <Route path="*" element={<Authentification onAuthenticate={handleAuthentication} />} />
+                        <Route 
+                            path="/login" 
+                            element={<Authentification onAuthenticate={handleAuthentication} />} 
+                        />
+                        <Route 
+                            path="/forgot-password" 
+                            element={<ForgotPassword />} 
+                        />
+                        <Route 
+                            path="*" 
+                            element={<Navigate to="/login" />} 
+                        />
                     </Routes>
                 )}
             </MainLayout>
@@ -89,24 +101,24 @@ const AppStyled = styled.div`
             display: flex;
             justify-content: space-around;
             list-style-type: none;
-            flex-wrap: wrap; /* Allows items to wrap in smaller screens */
+            flex-wrap: wrap;
 
             li {
-                flex: 1; /* Make each item take equal space */
-                cursor: pointer; /* Change cursor to pointer to indicate clickable */
-                
+                flex: 1;
+                cursor: pointer;
+
                 @media (max-width: 768px) {
-                    flex: 0 0 100%; /* Stack items vertically */
-                    text-align: center; /* Center align on small screens */
+                    flex: 0 0 100%;
+                    text-align: center;
                 }
 
-                padding: 0.5rem 1rem; /* Add some padding around the list item */
+                padding: 0.5rem 1rem;
                 color: #222260;
                 font-weight: 500;
-                transition: color 0.3s; /* Smooth transition for hover */
+                transition: color 0.3s;
 
                 &:hover {
-                    color: #007bff; /* Change color on hover */
+                    color: #007bff;
                 }
             }
         }
