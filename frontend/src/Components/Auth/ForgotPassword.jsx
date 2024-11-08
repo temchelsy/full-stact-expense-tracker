@@ -10,7 +10,7 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://full-stact-expense-tracker.onrender.com/forgot-password', { email });
+      const response = await axios.post('https://full-stact-expense-tracker.onrender.com/api/v1/forgot-password', { email });
       setMessage(response.data.message);
       setError('');
     } catch (err) {
