@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -22,8 +21,9 @@ const ResetPassword = () => {
       const response = await axios.post('https://full-stact-expense-tracker.onrender.com/api/v1/reset-password', { token, newPassword });
       setMessage(response.data.message);
       setError('');
+      
       // Redirect to login page after successful password reset
-      setTimeout(() => navigate.push('/login'), 3000);
+      setTimeout(() => navigate('/login'), 3000);
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong');
       setMessage('');
