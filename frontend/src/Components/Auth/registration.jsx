@@ -11,6 +11,8 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const validatePassword = (password) => {
         if (password.length < 8) {
@@ -78,13 +80,11 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
             // Store lastName in localStorage for future use
             localStorage.setItem('lastName', lastName);
             
-          
             if (data.token) {
                 localStorage.setItem('token', data.token);
             }
 
             // Show success message and proceed to authenticate
-            // setSuccessMessage('Registration successful! Redirecting to login...');
             toast.success('Registration successful! Redirecting to login...')
 
             setTimeout(() => {
@@ -92,8 +92,7 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
             }, 1500); // Redirect after 1.5 seconds
 
         } catch (error) {
-            // setErrorMessage('An error occurred. Please try again.');
-            toast.error('An error occurred. Please try again')
+            toast.error('An error occurred. Please try again');
             console.error('Error:', error.message);
         } finally {
             setIsLoading(false);
@@ -136,25 +135,41 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
                         required
                     />
                     <label htmlFor="password">Password</label>
-                    <input
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        type="password"
-                        placeholder="Password"
-                        id="password"
-                        name="password"
-                        required
-                    />
+                    <div className="password-container">
+                        <input
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="Password"
+                            id="password"
+                            name="password"
+                            required
+                        />
+                        <span
+                            className="eye-icon"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? '🙈' : '👁️'}
+                        </span>
+                    </div>
                     <label htmlFor="confirmPassword">Confirm Password</label>
-                    <input
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        type="password"
-                        placeholder="Confirm Password"
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        required
-                    />
+                    <div className="password-container">
+                        <input
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            type={showConfirmPassword ? 'text' : 'password'}
+                            placeholder="Confirm Password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            required
+                        />
+                        <span
+                            className="eye-icon"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        >
+                            {showConfirmPassword ? '🙈' : '👁️'}
+                        </span>
+                    </div>
                     <button type="submit" disabled={isLoading}>
                         {isLoading ? 'Registering...' : 'Register'}
                     </button>
