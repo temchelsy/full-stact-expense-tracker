@@ -9,7 +9,7 @@ const ResetPassword = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const { token } = useParams(); // Token from URL
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,7 +23,7 @@ const ResetPassword = () => {
       setMessage(response.data.message);
       setError('');
       // Redirect to login page after successful password reset
-      setTimeout(() => useNavigate.push('/login'), 3000);
+      setTimeout(() => navigate.push('/login'), 3000);
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong');
       setMessage('');
