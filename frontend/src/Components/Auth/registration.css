@@ -119,3 +119,22 @@ button:hover {
         height: 20px;
     }
 }
+
+.password-container {
+    position: relative;
+}
+
+.password-container input {
+    width: calc(100% - 30px);
+    padding-right: 30px;
+}
+
+.eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+

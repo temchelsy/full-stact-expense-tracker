@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
-
+// import './forgot-password.css'ss
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -20,21 +20,24 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div>
-      <h2>Forgot Password</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
-          required
-        />
-        <button type="submit">Submit</button>
-      </form>
-
-      {message && <p>{message}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className="background-container">
+      <div className="form-container">
+        <h2>Forgot Password</h2>
+        <form onSubmit={handleSubmit} className="login-form">
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+            required
+          />
+          <button type="submit">Submit</button>
+        </form>
+        {message && <p className="success-message">{message}</p>}
+        {error && <p className="error-message" style={{ color: 'red' }}>{error}</p>}
+      </div>
     </div>
   );
 };
