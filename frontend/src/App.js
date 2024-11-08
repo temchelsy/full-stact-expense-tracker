@@ -19,15 +19,10 @@ function App() {
     const navigate = useNavigate();
 
     const global = useGlobalContext();
-    console.log(global);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        if (token) {
-            setIsAuthenticated(true);
-        } else {
-            setIsAuthenticated(false);
-        }
+        setIsAuthenticated(!!token);
     }, []);
 
     const handleAuthentication = (authStatus, redirectPath = '/') => {
@@ -35,10 +30,6 @@ function App() {
         if (authStatus) {
             navigate(redirectPath);
         }
-    };
-
-    const handleNavigation = (path) => {
-        navigate(path);
     };
 
     return (
@@ -68,9 +59,9 @@ function App() {
                             path="/forgot-password" 
                             element={<ForgotPassword />} 
                         />
-
-<Route 
-                            path="/reset-password" 
+                        {/* Updated Reset Password Route */}
+                        <Route 
+                            path="/reset-password/:token" 
                             element={<ResetPassword />} 
                         />
                         <Route 
