@@ -23,7 +23,7 @@ const ResetPassword = () => {
       setMessage(response.data.message);
       setError('');
       // Redirect to login page after successful password reset
-      setTimeout(() => history.push('/login'), 3000);
+      setTimeout(() => useNavigate.push('/login'), 3000);
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong');
       setMessage('');
