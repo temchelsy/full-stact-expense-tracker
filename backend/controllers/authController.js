@@ -36,7 +36,7 @@ const createJWT = (id) => {
   );
 };
 
-// Controllers
+
 export const register = async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
@@ -154,7 +154,7 @@ export const getCurrentUser = async (req, res) => {
 };
 
 
-// Controller for Forgot Password
+
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;

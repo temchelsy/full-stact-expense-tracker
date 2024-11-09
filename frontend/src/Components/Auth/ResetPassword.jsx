@@ -21,9 +21,7 @@ const ResetPassword = () => {
       const response = await axios.post('https://full-stact-expense-tracker.onrender.com/api/v1/reset-password', { token, newPassword });
       setMessage(response.data.message);
       setError('');
-      
-      // Redirect to login page after successful password reset
-      setTimeout(() => navigate('/login'), 3000);
+      setTimeout(() => navigate('/login'), 3000); // Redirect after 3 seconds
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong');
       setMessage('');
@@ -31,28 +29,33 @@ const ResetPassword = () => {
   };
 
   return (
-    <div>
-      <h2>Reset Password</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          placeholder="New Password"
-          required
-        />
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="Confirm New Password"
-          required
-        />
-        <button type="submit">Reset Password</button>
-      </form>
-
-      {message && <p>{message}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className="background-container">
+      <div className="form-container">
+        <h2>Reset Password</h2>
+        <form onSubmit={handleSubmit} className="login-form">
+          <label htmlFor="newPassword">New Password</label>
+          <input
+            id="newPassword"
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder="New Password"
+            required
+          />
+          <label htmlFor="confirmPassword">Confirm New Password</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm New Password"
+            required
+          />
+          <button type="submit">Reset Password</button>
+        </form>
+        {message && <p className="success-message">{message}</p>}
+        {error && <p className="error-message">{error}</p>}
+      </div>
     </div>
   );
 };
