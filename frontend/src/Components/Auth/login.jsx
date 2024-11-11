@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
 import { toast } from 'sonner';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 export const Login = ({ onAuthenticate, onFormSwitch }) => {
     const [email, setEmail] = useState('');
@@ -10,6 +12,7 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false); // Added state for password visibility
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -35,23 +38,17 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
 
             if (response.ok) {
                 const data = await response.json();
-                
-                console.log('Server Response:', data);
-                
+
                 if (data.token) {
                     toast.success('Login successful!');
-
-                    // Store the token in localStorage
                     localStorage.setItem('token', data.token);
 
-                    // Handle "Remember Me" logic
                     if (rememberMe) {
                         localStorage.setItem('email', email);
                     } else {
                         localStorage.removeItem('email');
                     }
 
-                    // Call authentication handler and navigate to home
                     onAuthenticate(true, '/');
                 } else {
                     setErrorMessage('Login successful, but no token received. Please try again.');
@@ -62,7 +59,6 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
             }
         } catch (error) {
             setErrorMessage('An error occurred. Please try again.');
-            console.error('Error:', error.message);
             toast.error('Login failed');
         } finally {
             setIsLoading(false);
@@ -87,15 +83,23 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                         required
                     />
                     <label htmlFor="password">Password</label>
-                    <input
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        type="password"
-                        placeholder="password"
-                        id="password"
-                        name="password"
-                        required
-                    />
+                    <div className="password-container">
+                        <input
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            type={showPassword ? 'text' : 'password'} // Conditional rendering of input type
+                            placeholder="Password"
+                            id="password"
+                            name="password"
+                            required
+                        />
+                        <span
+                            className="eye-icon"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                        </span>
+                    </div>
                     <div className="remember-me">
                         <input
                             type="checkbox"
@@ -113,7 +117,6 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                 <button className="link-btn" onClick={() => onFormSwitch('register')}>
                     Don't have an account? Register here.
                 </button>
-                {/* Forgot Password Link */}
                 <button
                     className="link-btn"
                     onClick={() => navigate('/forgot-password')}

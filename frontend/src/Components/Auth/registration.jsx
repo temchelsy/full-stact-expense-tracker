@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import './registration.css';
 import { toast } from "sonner";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 export const Registration = ({ onAuthenticate, onFormSwitch }) => {
     const [email, setEmail] = useState('');
@@ -36,14 +38,12 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
         setSuccessMessage('');
         setIsLoading(true);
 
-        // Check for required fields
         if (!firstName || !lastName) {
             setErrorMessage('First name and last name are required.');
             setIsLoading(false);
             return;
         }
 
-        // Validate password
         const passwordValidationMessage = validatePassword(password);
         if (passwordValidationMessage) {
             setErrorMessage(passwordValidationMessage);
@@ -51,7 +51,6 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
             return;
         }
 
-        // Confirm passwords match
         if (password !== confirmPassword) {
             setErrorMessage('Passwords do not match.');
             setIsLoading(false);
@@ -59,7 +58,6 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
         }
 
         try {
-            // Send registration data to the API
             const response = await fetch('https://full-stact-expense-tracker.onrender.com/api/v1/register', {
                 method: 'POST',
                 headers: {
@@ -77,19 +75,16 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
 
             const data = await response.json();
 
-            // Store lastName in localStorage for future use
             localStorage.setItem('lastName', lastName);
-            
             if (data.token) {
                 localStorage.setItem('token', data.token);
             }
 
-            // Show success message and proceed to authenticate
-            toast.success('Registration successful! Redirecting to login...')
+            toast.success('Registration successful! Redirecting to login...');
 
             setTimeout(() => {
                 onAuthenticate(true, '/'); 
-            }, 1500); // Redirect after 1.5 seconds
+            }, 1500);
 
         } catch (error) {
             toast.error('An error occurred. Please try again');
@@ -149,7 +144,7 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
                             className="eye-icon"
                             onClick={() => setShowPassword(!showPassword)}
                         >
-                            {showPassword ? '🙈' : '👁️'}
+                            {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
                         </span>
                     </div>
                     <label htmlFor="confirmPassword">Confirm Password</label>
@@ -167,7 +162,7 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
                             className="eye-icon"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
-                            {showConfirmPassword ? '🙈' : '👁️'}
+                            {showConfirmPassword ? <VisibilityIcon  /> : <VisibilityOffIcon/>}
                         </span>
                     </div>
                     <button type="submit" disabled={isLoading}>

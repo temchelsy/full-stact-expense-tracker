@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const { token } = useParams(); // Token from URL
@@ -34,23 +38,33 @@ const ResetPassword = () => {
         <h2>Reset Password</h2>
         <form onSubmit={handleSubmit} className="login-form">
           <label htmlFor="newPassword">New Password</label>
-          <input
-            id="newPassword"
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            placeholder="New Password"
-            required
-          />
+          <div className="password-container">
+            <input
+              id="newPassword"
+              type={showNewPassword ? 'text' : 'password'}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="New Password"
+              required
+            />
+            <span onClick={() => setShowNewPassword(!showNewPassword)} className="eye-icon">
+              {showNewPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+            </span>
+          </div>
           <label htmlFor="confirmPassword">Confirm New Password</label>
-          <input
-            id="confirmPassword"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Confirm New Password"
-            required
-          />
+          <div className="password-container">
+            <input
+              id="confirmPassword"
+              type={showConfirmPassword ? 'text' : 'password'}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm New Password"
+              required
+            />
+            <span onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="eye-icon">
+              {showConfirmPassword ? <VisibilityIcon /> : < VisibilityOffIcon/>}
+            </span>
+          </div>
           <button type="submit">Reset Password</button>
         </form>
         {message && <p className="success-message">{message}</p>}
