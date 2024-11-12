@@ -3,10 +3,10 @@ import nodemailer from 'nodemailer';
 // Function to send email
 export const sendEmail = async (to, subject, text) => {
   const transporter = nodemailer.createTransport({
-    service: 'gmail', // Can be any email service (e.g., Gmail, SendGrid, Mailgun)
+    service: 'gmail', 
     auth: {
-      user: process.env.EMAIL_USER, // Your email address
-      pass: process.env.EMAIL_PASS, // Your email password or an app-specific password
+      user: process.env.EMAIL_USER, 
+      pass: process.env.EMAIL_PASS, 
     },
   });
 

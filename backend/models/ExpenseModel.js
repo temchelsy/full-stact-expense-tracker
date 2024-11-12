@@ -33,7 +33,7 @@ const ExpenseSchema = new mongoose.Schema({
         maxLength: 70,
         trim: true,
     },
-    userId: { // Field to link the expense to a user
+    userId: { 
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User', 

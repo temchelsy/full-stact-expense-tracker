@@ -1,0 +1,27 @@
+/* Center the spinner in the viewport */
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  
+  /* Spinner styles */
+  .spinner {
+    animation: spin 1s linear infinite;
+    border-radius: 50%;
+    height: 3rem;
+    width: 3rem;
+    border-top: 0.25rem solid transparent;
+    border-bottom: 0.25rem solid transparent;
+    border-right: 0.25rem solid #007bff; /* Blue color */
+    border-left: 0.25rem solid #007bff;
+  }
+  
+  /* Spin animation */
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
