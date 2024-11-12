@@ -33,7 +33,7 @@ const IncomeSchema = new mongoose.Schema({
         maxLength: 100,
         trim: true
     },
-    userId: { // Field to link the income to a user
+    userId: { 
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'

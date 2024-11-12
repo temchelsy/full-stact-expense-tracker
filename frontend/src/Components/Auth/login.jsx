@@ -4,6 +4,7 @@ import './login.css';
 import { toast } from 'sonner';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import GoogleAuth from './GoogleAuth';
 
 export const Login = ({ onAuthenticate, onFormSwitch }) => {
     const [email, setEmail] = useState('');
@@ -117,6 +118,7 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                 <button className="link-btn" onClick={() => onFormSwitch('register')}>
                     Don't have an account? Register here.
                 </button>
+                <GoogleAuth />
                 <button
                     className="link-btn"
                     onClick={() => navigate('/forgot-password')}

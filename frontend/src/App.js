@@ -12,6 +12,7 @@ import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Authentification from './Components/Auth/auth';
 import ForgotPassword from './Components/Auth/ForgotPassword';
 import ResetPassword from './Components/Auth/ResetPassword';
+import OauthCallback from './Components/Auth/OauthCallback';
 
 function App() {
     const [active, setActive] = useState(1);
@@ -59,7 +60,9 @@ function App() {
                             path="/forgot-password" 
                             element={<ForgotPassword />} 
                         />
-                        {/* Updated Reset Password Route */}
+
+<Route path="/auth/callback" element={<OauthCallback />} />
+                     
                         <Route 
                             path="/reset-password/:token" 
                             element={<ResetPassword />} 

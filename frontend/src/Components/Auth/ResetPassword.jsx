@@ -11,7 +11,7 @@ const ResetPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const { token } = useParams(); // Token from URL
+  const { token } = useParams(); 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -25,7 +25,7 @@ const ResetPassword = () => {
       const response = await axios.post('https://full-stact-expense-tracker.onrender.com/api/v1/reset-password', { token, newPassword });
       setMessage(response.data.message);
       setError('');
-      setTimeout(() => navigate('/login'), 3000); // Redirect after 3 seconds
+      setTimeout(() => navigate('/login'), 3000); 
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong');
       setMessage('');
