@@ -14,7 +14,7 @@ const GoogleAuth = () => {
   const handleGoogleLogin = () => {
     setLoading(true);
     try {
-      window.location.href = 'http://localhost:8000/api/v1/google/'; 
+      window.location.href = 'https://full-stact-expense-tracker.onrender.com/api/v1/google/'; 
     } catch (error) {
       console.error("Google login failed:", error);
     }
