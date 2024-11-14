@@ -66,6 +66,15 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
         }
     };
 
+    const handleGoogleLogin = () => {
+        setIsLoading(true);
+        try {
+            window.location.href = 'https://full-stact-expense-tracker.onrender.com/api/v1/google/'; 
+        } catch (error) {
+            console.error("Google login failed:", error);
+        }
+    };
+
     return (
         <div className="background-container">
             <div className="form-container">
@@ -125,7 +134,9 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                 >
                     Forgot Password?
                 </button>
-                <GoogleAuth />
+
+                {/* Google login button here */}
+                <GoogleAuth loading={isLoading} onClick={handleGoogleLogin} />
             </div>
         </div>
     );

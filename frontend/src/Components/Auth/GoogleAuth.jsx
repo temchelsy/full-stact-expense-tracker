@@ -1,36 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FcGoogle } from "react-icons/fc";
-import { useNavigate } from 'react-router-dom';
 import './GoogleAuth.css';
 
-const GoogleAuth = () => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    
-  }, [navigate]);
-
-  const handleGoogleLogin = () => {
-    setLoading(true);
-    try {
-      window.location.href = 'https://full-stact-expense-tracker.onrender.com/api/v1/google/'; 
-    } catch (error) {
-      console.error("Google login failed:", error);
-    }
-  };
-
+const GoogleAuth = ({ loading, onClick }) => {
   return (
-    <div className="container">
-      <button
-        onClick={handleGoogleLogin}
-        className="button"
-        disabled={loading}
-      >
-        <FcGoogle className={`icon ${loading ? 'loading' : ''}`} />
-        {loading ? 'Loading...' : 'Login with Google'}
-      </button>
-    </div>
+    <button
+      onClick={onClick}
+      className="button"
+      disabled={loading}
+    >
+      <FcGoogle className={`icon ${loading ? 'loading' : ''}`} />
+      {loading ? 'Loading...' : 'Login with Google'}
+    </button>
   );
 };
 
