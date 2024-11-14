@@ -4,7 +4,7 @@ import './login.css';
 import { toast } from 'sonner';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-// import GoogleAuth from './GoogleAuth';
+import GoogleAuth from './GoogleAuth';
 
 export const Login = ({ onAuthenticate, onFormSwitch }) => {
     const [email, setEmail] = useState('');
@@ -125,7 +125,7 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                 >
                     Forgot Password?
                 </button>
-                {/* <GoogleAuth /> */}
+                <GoogleAuth />
             </div>
         </div>
     );
