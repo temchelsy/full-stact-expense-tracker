@@ -8,7 +8,7 @@ const GoogleAuth = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Add logic here if you need to redirect after login or based on a condition.
+    
   }, [navigate]);
 
   const handleGoogleLogin = () => {
