@@ -10,17 +10,18 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isFormLoading, setIsFormLoading] = useState(false); // for form loading state
+    const [isGoogleLoading, setIsGoogleLoading] = useState(false); // for Google login loading state
     const [showPassword, setShowPassword] = useState(false); 
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
+        setIsFormLoading(true); // Set form loading to true when form is submitted
 
         if (!email || !password) {
             toast.error('Email and password are required');
-            setIsLoading(false);
+            setIsFormLoading(false);
             return;
         }
 
@@ -57,12 +58,12 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
         } catch (error) {
             toast.error('An error occurred. Please try again.');
         } finally {
-            setIsLoading(false);
+            setIsFormLoading(false); // Reset form loading after request
         }
     };
 
     const handleGoogleLogin = () => {
-        // Redirect to the Google OAuth endpoint without triggering inline CSP issues
+        setIsGoogleLoading(true); // Set Google loading to true when Google login is triggered
         window.location.href = 'https://full-stact-expense-tracker.onrender.com/api/v1/google';
     };
 
@@ -108,8 +109,8 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                         />
                         <label htmlFor="rememberMe">Remember Me</label>
                     </div>
-                    <button type="submit" disabled={isLoading}>
-                        {isLoading ? 'Logging in...' : 'Log In'}
+                    <button type="submit" disabled={isFormLoading}>
+                        {isFormLoading ? 'Logging in...' : 'Log In'}
                     </button>
                 </form>
                 <button className="link-btn" onClick={() => onFormSwitch('register')}>
@@ -123,7 +124,7 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                 </button>
 
                 {/* Google login button */}
-                <GoogleAuth loading={isLoading} onClick={handleGoogleLogin} />
+                <GoogleAuth loading={isGoogleLoading} onClick={handleGoogleLogin} />
             </div>
         </div>
     );
