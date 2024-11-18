@@ -10,19 +10,21 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: 'https://full-stact-expense-tracker.onrender.com/api/v1/google/callback', 
+      callbackURL: 'https://full-stact-expense-tracker.onrender.com/api/v1/google/callback',
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Try to find an existing user by Google ID
+        console.log('Google Profile:', profile);
+
+        
         let user = await User.findOne({ googleId: profile.id });
 
         if (!user) {
-          // If the user doesn't exist by Google ID, check by email
+          
           user = await User.findOne({ email: profile.emails[0].value });
 
           if (!user) {
-            // If no user exists by email, create a new user
+            
             user = await User.create({
               googleId: profile.id,
               firstName: profile.name.givenName,
@@ -36,9 +38,9 @@ passport.use(
           }
         }
 
-        // If the user is found, return the user object
         return done(null, user);
       } catch (error) {
+        console.error('Error in Google Strategy:', error);
         return done(error, null);
       }
     }

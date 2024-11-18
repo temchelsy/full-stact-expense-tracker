@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import authenticateUser from '../middleware/authMiddleware.js'; // Custom middleware to check authenticated user
+import authenticateUser from '../middleware/authMiddleware.js'; 
 import { getCurrentUser, register, login, forgotPassword, resetPassword } from '../controllers/authController.js';
 
 const router = express.Router();
@@ -15,7 +15,7 @@ const createJWT = (id) => {
   );
 };
 
-// Standard authentication routes for user registration, login, and password reset
+
 router.post('/register', register);
 router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
@@ -27,35 +27,42 @@ router.get('/current', authenticateUser, getCurrentUser);
 // Route to start Google OAuth flow
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-// Google OAuth callback handler
+// Google OAuth callback 
 router.get(
   '/google/callback',
-  passport.authenticate('google', { session: false, failureRedirect: '/login' }), // Fail to login if authentication fails
+  passport.authenticate('google', {
+    session: false,
+    failureRedirect: '/login',
+  }),
   (req, res) => {
-    // If `req.user` is undefined, the authentication has failed
     if (!req.user) {
+      console.error('Google authentication failed: User not found.');
       return res.status(401).json({
         status: 'failed',
         message: 'Google authentication failed',
       });
     }
 
-    // Generate a JWT token for the user
-    const token = createJWT(req.user._id);
-
-    // Return user information along with the JWT token
-    res.status(200).json({
-      status: 'success',
-      message: 'Google login successful',
-      user: {
-        _id: req.user._id,
-        firstName: req.user.firstName,
-        lastName: req.user.lastName,
-        email: req.user.email,
-      },
-      token,
-    });
+    // Generate token and return success response
+    try {
+      const token = createJWT(req.user._id);
+      res.status(200).json({
+        status: 'success',
+        message: 'Google login successful',
+        user: {
+          _id: req.user._id,
+          firstName: req.user.firstName,
+          lastName: req.user.lastName,
+          email: req.user.email,
+        },
+        token,
+      });
+    } catch (error) {
+      console.error('Token generation error:', error);
+      res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+    }
   }
 );
+
 
 export default router;
