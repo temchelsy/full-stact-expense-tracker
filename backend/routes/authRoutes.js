@@ -15,7 +15,7 @@ const createJWT = (id) => {
   );
 };
 
-
+// Authentication routes
 router.post('/register', register);
 router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
@@ -27,12 +27,12 @@ router.get('/current', authenticateUser, getCurrentUser);
 // Route to start Google OAuth flow
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-// Google OAuth callback 
+// Google OAuth callback route
 router.get(
   '/google/callback',
   passport.authenticate('google', {
     session: false,
-    failureRedirect: '/login',
+    failureRedirect: '/login', // Redirect to login if authentication fails
   }),
   (req, res) => {
     if (!req.user) {
@@ -43,26 +43,13 @@ router.get(
       });
     }
 
-    // Generate token and return success response
-    try {
-      const token = createJWT(req.user._id);
-      res.status(200).json({
-        status: 'success',
-        message: 'Google login successful',
-        user: {
-          _id: req.user._id,
-          firstName: req.user.firstName,
-          lastName: req.user.lastName,
-          email: req.user.email,
-        },
-        token,
-      });
-    } catch (error) {
-      console.error('Token generation error:', error);
-      res.status(500).json({ status: 'error', message: 'Internal Server Error' });
-    }
+    // Generate JWT token
+    const token = createJWT(req.user._id);
+
+    // Redirect to frontend with the token
+    const frontendRedirectURL = `https://full-stact-expense-tracker.vercel.app?token=${token}`;
+    res.redirect(frontendRedirectURL);
   }
 );
-
 
 export default router;

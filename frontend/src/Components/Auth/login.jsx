@@ -62,8 +62,8 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
     };
 
     const handleGoogleLogin = () => {
-        // Redirect to the OAuth endpoint without triggering inline CSP issues
-        window.open('https://full-stact-expense-tracker.onrender.com/api/v1/google/', '_self');
+        // Redirect to the Google OAuth endpoint without triggering inline CSP issues
+        window.location.href = 'https://full-stact-expense-tracker.onrender.com/api/v1/google';
     };
 
     return (
@@ -123,7 +123,9 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                 </button>
 
                 {/* Google login button */}
-                <GoogleAuth loading={isLoading} onClick={handleGoogleLogin} />
+                <button className="google-login-btn" onClick={handleGoogleLogin}>
+                    Login with Google
+                </button>
             </div>
         </div>
     );
