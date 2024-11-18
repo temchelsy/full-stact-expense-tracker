@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FcGoogle } from "react-icons/fc";
+import React from 'react';
+import { FcGoogle } from 'react-icons/fc';
 import './GoogleAuth.css';
 
 const GoogleAuth = ({ loading, onClick }) => {
@@ -8,9 +8,10 @@ const GoogleAuth = ({ loading, onClick }) => {
       onClick={onClick}
       className="button"
       disabled={loading}
+      aria-label={loading ? 'Logging in with Google...' : 'Login with Google'}
     >
       <FcGoogle className={`icon ${loading ? 'loading' : ''}`} />
-      {loading ? 'Loading...' : 'Login with Google'}
+      {loading ? <span className="spinner"></span> : 'Login with Google'}
     </button>
   );
 };

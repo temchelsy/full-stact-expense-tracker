@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './login.css';
 import { toast } from 'sonner';
+import './login.css';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import GoogleAuth from './GoogleAuth';
@@ -123,9 +123,7 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                 </button>
 
                 {/* Google login button */}
-                <button className="google-login-btn" onClick={handleGoogleLogin}>
-                    Login with Google
-                </button>
+                <GoogleAuth loading={isLoading} onClick={handleGoogleLogin} />
             </div>
         </div>
     );
