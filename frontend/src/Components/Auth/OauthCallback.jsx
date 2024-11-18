@@ -15,11 +15,13 @@ const OauthCallback = () => {
     if (token) {
       // Store the token securely (consider using sessionStorage if appropriate)
       sessionStorage.setItem('authToken', token);
+
       setLoading(false);
-      navigate('/dashboard');
+      navigate('/dashboard'); // Redirect to dashboard on successful authentication
     } else {
       setLoading(false);
-      setError('Authentication failed. Please try again.');
+      setError('Authentication failed. No token found.');
+      // You can also pass the error message as a query parameter to show it on the login page.
       navigate('/login?error=auth_failed');
     }
   }, [location, navigate]);
