@@ -10,20 +10,16 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false); // Added state for password visibility
+    const [showPassword, setShowPassword] = useState(false); 
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrorMessage('');
-        setSuccessMessage('');
         setIsLoading(true);
 
         if (!email || !password) {
-            setErrorMessage('Email and password are required');
+            toast.error('Email and password are required');
             setIsLoading(false);
             return;
         }
@@ -52,35 +48,28 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
 
                     onAuthenticate(true, '/');
                 } else {
-                    setErrorMessage('Login successful, but no token received. Please try again.');
+                    toast.error('Login successful, but no token received.');
                 }
             } else {
                 const errorData = await response.json();
-                setErrorMessage(errorData.error || 'Login failed. Please try again.');
+                toast.error(errorData.error || 'Login failed. Please try again.');
             }
         } catch (error) {
-            setErrorMessage('An error occurred. Please try again.');
-            toast.error('Login failed');
+            toast.error('An error occurred. Please try again.');
         } finally {
             setIsLoading(false);
         }
     };
 
     const handleGoogleLogin = () => {
-        setIsLoading(true);
-        try {
-            window.location.href = 'https://full-stact-expense-tracker.onrender.com/api/v1/google/'; 
-        } catch (error) {
-            console.error("Google login failed:", error);
-        }
+        // Redirect to the OAuth endpoint without triggering inline CSP issues
+        window.open('https://full-stact-expense-tracker.onrender.com/api/v1/google/', '_self');
     };
 
     return (
         <div className="background-container">
             <div className="form-container">
                 <h2>Login to Expense Ease</h2>
-                {errorMessage && <p className="error-message">{errorMessage}</p>}
-                {successMessage && <p className="success-message">{successMessage}</p>}
                 <form className="login-form" onSubmit={handleSubmit}>
                     <label htmlFor="email">Email</label>
                     <input
@@ -97,7 +86,7 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                         <input
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            type={showPassword ? 'text' : 'password'} // Conditional rendering of input type
+                            type={showPassword ? 'text' : 'password'}
                             placeholder="Password"
                             id="password"
                             name="password"
@@ -122,12 +111,10 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                     <button type="submit" disabled={isLoading}>
                         {isLoading ? 'Logging in...' : 'Log In'}
                     </button>
-                    {isLoading && <div className="loader"></div>}
                 </form>
                 <button className="link-btn" onClick={() => onFormSwitch('register')}>
                     Don't have an account? Register here.
                 </button>
-                
                 <button
                     className="link-btn"
                     onClick={() => navigate('/forgot-password')}
@@ -135,7 +122,7 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                     Forgot Password?
                 </button>
 
-                {/* Google login button here */}
+                {/* Google login button */}
                 <GoogleAuth loading={isLoading} onClick={handleGoogleLogin} />
             </div>
         </div>

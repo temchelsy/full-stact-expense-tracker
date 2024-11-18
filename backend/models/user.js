@@ -5,8 +5,8 @@ const userSchema = new mongoose.Schema(
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String }, // Optional for Google users
-    googleId: { type: String, unique: true, sparse: true }, // Google ID is optional
+    password: { type: String }, 
+    googleId: { type: String, unique: true, sparse: true }, 
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
   },
