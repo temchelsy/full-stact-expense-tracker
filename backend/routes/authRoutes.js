@@ -47,7 +47,7 @@ router.get(
     const token = createJWT(req.user._id);
 
     // Redirect to frontend with the token
-    const frontendRedirectURL = `https://full-stact-expense-tracker.onrender.com/api/v1/google/callback?token=${token}`;
+    const frontendRedirectURL = `https://full-stact-expense-tracker.vercel.app?token=${token}`;
     res.redirect(frontendRedirectURL);
   }
 );

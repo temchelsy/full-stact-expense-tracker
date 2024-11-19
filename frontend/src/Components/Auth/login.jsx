@@ -10,8 +10,8 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
-    const [isFormLoading, setIsFormLoading] = useState(false); // for form loading state
-    const [isGoogleLoading, setIsGoogleLoading] = useState(false); // for Google login loading state
+    const [isFormLoading, setIsFormLoading] = useState(false); // Form loading state
+    const [isGoogleLoading, setIsGoogleLoading] = useState(false); // Google login loading state
     const [showPassword, setShowPassword] = useState(false); 
     const navigate = useNavigate();
 
@@ -63,7 +63,7 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
     };
 
     const handleGoogleLogin = () => {
-        setIsGoogleLoading(true); // Set Google loading to true when Google login is triggered
+        setIsGoogleLoading(true); // Set Google login loading state
         window.location.href = 'https://full-stact-expense-tracker.onrender.com/api/v1/google';
     };
 
@@ -109,7 +109,7 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                         />
                         <label htmlFor="rememberMe">Remember Me</label>
                     </div>
-                    <button type="submit" disabled={isFormLoading}>
+                    <button type="submit" disabled={isFormLoading || isGoogleLoading}>
                         {isFormLoading ? 'Logging in...' : 'Log In'}
                     </button>
                 </form>
