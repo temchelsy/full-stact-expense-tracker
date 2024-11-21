@@ -8,9 +8,9 @@ dotenv.config();
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: 'https://full-stact-expense-tracker.onrender.com/api/v1/google/callback',
+      clientID: process.env.GOOGLE_CLIENT_ID, // Make sure this is correct
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET, // Make sure this is correct
+      callbackURL: 'https://full-stact-expense-tracker.onrender.com/api/v1/google/callback', // Ensure this is the same as in your Google Developer Console
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -23,7 +23,7 @@ passport.use(
 
         if (!email) {
           console.error('Google profile is missing email:', profile);
-          throw new Error('Google login failed: No email provided by Google.');
+          return done(new Error('Google login failed: No email provided by Google.'));
         }
 
         // Find user by Google ID

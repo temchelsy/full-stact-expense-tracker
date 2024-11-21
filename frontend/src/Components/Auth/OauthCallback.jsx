@@ -9,27 +9,26 @@ const OauthCallback = () => {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
-    const token = queryParams.get('token');  // Retrieve token from URL query params
+    const token = queryParams.get('token');
 
     if (token) {
-      // Store the token securely (consider using localStorage)
-      localStorage.setItem('authToken', token);
-
+      sessionStorage.setItem('authToken', token);
       setLoading(false);
-      navigate('/dashboard');  // Redirect to dashboard after successful authentication
+      navigate('/dashboard'); // Redirect to dashboard on successful authentication
     } else {
       setLoading(false);
       setError('Authentication failed. No token found.');
-      navigate('/login?error=auth_failed');  // Redirect to login page with error
+      navigate('/login?error=auth_failed');
     }
   }, [location, navigate]);
 
   return (
-    <div>
-      {loading && <p>Authenticating...</p>}
-      {error && <p>{error}</p>}
+    <div className="container">
+      {loading && <div className="spinner">Authenticating...</div>}
+      {error && <div className="error-message">{error}</div>}
     </div>
   );
 };
+
 
 export default OauthCallback;

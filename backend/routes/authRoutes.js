@@ -25,31 +25,53 @@ router.post('/reset-password', resetPassword);
 router.get('/current', authenticateUser, getCurrentUser);
 
 // Google OAuth login route
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-// Google OAuth callback route
 router.get(
   '/google/callback',
   passport.authenticate('google', {
-    session: false,
+    session: false, // No session will be used, as we are generating a JWT
     failureRedirect: '/login', // Redirect to login if authentication fails
   }),
-  (req, res) => {
-    if (!req.user) {
-      console.error('Google authentication failed: User not found.');
-      return res.status(401).json({
+  async (req, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          status: 'failed',
+          message: 'Google authentication failed',
+        });
+      }
+
+      // Check if the user exists, or create a new one if they don't
+      let user = await User.findOne({ googleId: req.user.id });
+
+      if (!user) {
+        user = new User({
+          googleId: req.user.id,
+          firstName: req.user.name.givenName,
+          lastName: req.user.name.familyName,
+          email: req.user.emails[0].value,
+        });
+
+        // Save the new user to the database
+        await user.save();
+      }
+
+      // Generate JWT token
+      const token = createJWT(user._id);
+
+      console.log("Generated Google OAuth Token:", token);  // <-- Add this line to check if token is generated
+
+      // Redirect to frontend with the token
+      const frontendRedirectURL = `https://full-stact-expense-tracker.vercel.app/oauth-callback?token=${token}`;
+      res.redirect(frontendRedirectURL);
+    } catch (error) {
+      console.error('Error during Google OAuth callback:', error);
+      return res.status(500).json({
         status: 'failed',
-        message: 'Google authentication failed',
+        message: 'Internal server error.',
       });
     }
-
-    // Generate JWT token
-    const token = createJWT(req.user._id);
-
-    // Redirect to frontend with the token in query parameter
-    const frontendRedirectURL = `https://full-stact-expense-tracker.vercel.app/oauth-callback?token=${token}`;
-    res.redirect(frontendRedirectURL);
   }
 );
+
 
 export default router;
