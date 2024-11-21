@@ -1,8 +1,6 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import passport from "passport";
-import dotenv from "dotenv";
-import mongoose from "mongoose";
 import User from "../models/user.js"; // Ensure User is imported
 import authenticateUser from "../middleware/authMiddleware.js";
 import {
