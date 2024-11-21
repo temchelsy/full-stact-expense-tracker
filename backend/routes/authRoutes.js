@@ -1,6 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
+import User from '../models/user.js'; 
 import authenticateUser from '../middleware/authMiddleware.js'; 
 import { getCurrentUser, register, login, forgotPassword, resetPassword } from '../controllers/authController.js';
 
