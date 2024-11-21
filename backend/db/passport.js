@@ -1,20 +1,23 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import User from '../models/user.js'; // Adjust path as needed
 import dotenv from 'dotenv';
-import User from '../models/user.js';
 
 dotenv.config();
 
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID, // Make sure this is correct
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET, // Make sure this is correct
-      callbackURL: 'https://full-stact-expense-tracker.onrender.com/api/v1/google/callback', // Ensure this is the same as in your Google Developer Console
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL || 
+                   'https://full-stact-expense-tracker.onrender.com/api/v1/google/callback',
+      passReqToCallback: true,
+      scope: ['profile', 'email']
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (req, accessToken, refreshToken, profile, done) => {
       try {
-        console.log('Google Profile:', profile);
+        console.log('Google Profile:', JSON.stringify(profile, null, 2));
 
         // Extract fields with fallbacks
         const firstName = profile.name?.givenName || 'Unknown';
@@ -23,26 +26,28 @@ passport.use(
 
         if (!email) {
           console.error('Google profile is missing email:', profile);
-          return done(new Error('Google login failed: No email provided by Google.'));
+          return done(new Error('Google login failed: No email provided'));
         }
 
-        // Find user by Google ID
-        let user = await User.findOne({ googleId: profile.id });
+        // Find user by Google ID or email
+        let user = await User.findOne({ 
+          $or: [
+            { googleId: profile.id },
+            { email: email }
+          ]
+        });
 
         if (!user) {
-          // If user doesn't exist by Google ID, check by email
-          user = await User.findOne({ email });
-
-          if (!user) {
-            // Create new user if no match is found
-            user = await User.create({
-              googleId: profile.id,
-              firstName,
-              lastName,
-              email,
-            });
-          } else {
-            // Update existing user's Google ID if it was missing
+          // Create new user if no match is found
+          user = await User.create({
+            googleId: profile.id,
+            firstName,
+            lastName,
+            email,
+          });
+        } else {
+          // Update existing user's Google ID if it was missing
+          if (!user.googleId) {
             user.googleId = profile.id;
             await user.save();
           }
@@ -50,7 +55,7 @@ passport.use(
 
         return done(null, user);
       } catch (error) {
-        console.error('Error in Google Strategy:', error);
+        console.error('Google Strategy Error:', error);
         return done(error, null);
       }
     }
