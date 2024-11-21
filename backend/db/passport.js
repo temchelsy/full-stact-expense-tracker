@@ -1,7 +1,7 @@
-import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import User from '../models/user.js'; // Adjust path as needed
-import dotenv from 'dotenv';
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import User from "../models/user.js"; // Adjust path as needed
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -10,31 +10,29 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || 
-                   'https://full-stact-expense-tracker.onrender.com/api/v1/google/callback',
+      callbackURL:
+        process.env.GOOGLE_CALLBACK_URL ||
+        "https://full-stact-expense-tracker.onrender.com/api/v1/google/callback",
       passReqToCallback: true,
-      scope: ['profile', 'email']
+      scope: ["profile", "email"],
     },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
-        console.log('Google Profile:', JSON.stringify(profile, null, 2));
+        console.log("Google Profile:", JSON.stringify(profile, null, 2));
 
         // Extract fields with fallbacks
-        const firstName = profile.name?.givenName || 'Unknown';
-        const lastName = profile.name?.familyName || 'Unknown';
+        const firstName = profile.name?.givenName || "Unknown";
+        const lastName = profile.name?.familyName || "Unknown";
         const email = profile.emails?.[0]?.value;
 
         if (!email) {
-          console.error('Google profile is missing email:', profile);
-          return done(new Error('Google login failed: No email provided'));
+          console.error("Google profile is missing email:", profile);
+          return done(new Error("Google login failed: No email provided"));
         }
 
         // Find user by Google ID or email
-        let user = await User.findOne({ 
-          $or: [
-            { googleId: profile.id },
-            { email: email }
-          ]
+        let user = await User.findOne({
+          $or: [{ googleId: profile.id }, { email: email }],
         });
 
         if (!user) {
@@ -55,7 +53,7 @@ passport.use(
 
         return done(null, user);
       } catch (error) {
-        console.error('Google Strategy Error:', error);
+        console.error("Google Strategy Error:", error);
         return done(error, null);
       }
     }
