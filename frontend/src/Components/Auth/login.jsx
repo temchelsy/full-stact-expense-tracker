@@ -17,7 +17,7 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsFormLoading(true); // Set form loading to true when form is submitted
+        setIsFormLoading(true);
 
         if (!email || !password) {
             toast.error('Email and password are required');
@@ -58,12 +58,12 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
         } catch (error) {
             toast.error('An error occurred. Please try again.');
         } finally {
-            setIsFormLoading(false); // Reset form loading after request
+            setIsFormLoading(false);
         }
     };
 
     const handleGoogleLogin = () => {
-        setIsGoogleLoading(true); // Set Google login loading state
+        setIsGoogleLoading(true);
         window.location.href = 'https://full-stact-expense-tracker.onrender.com/api/v1/google';
     };
 
@@ -122,8 +122,6 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                 >
                     Forgot Password?
                 </button>
-
-                {/* Google login button */}
                 <GoogleAuth loading={isGoogleLoading} onClick={handleGoogleLogin} />
             </div>
         </div>
