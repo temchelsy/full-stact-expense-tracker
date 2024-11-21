@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const OauthCallback = () => {
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -12,20 +12,20 @@ const OauthCallback = () => {
     const token = queryParams.get('token');
 
     if (token) {
-      sessionStorage.setItem('authToken', token);
+      sessionStorage.setItem('authToken', token); // Store token in sessionStorage
       setLoading(false);
-      navigate('/dashboard'); // Redirect to dashboard on successful authentication
+      navigate('/dashboard'); // Redirect to dashboard or any other page
     } else {
       setLoading(false);
-      setError('Authentication failed. No token found.');
+      setError('Authentication failed: No token found.');
       navigate('/login?error=auth_failed');
     }
   }, [location, navigate]);
 
   return (
-    <div className="container">
-      {loading && <div className="spinner">Authenticating...</div>}
-      {error && <div className="error-message">{error}</div>}
+    <div>
+      {loading && <div>Loading...</div>}
+      {error && <div>{error}</div>}
     </div>
   );
 };
