@@ -8,7 +8,7 @@ const GoogleAuth = ({ loading, onClick }) => {
       onClick={onClick}
       className="button"
       disabled={loading}
-      aria-label={loading ? 'Logging in with Google...' : 'Login with Google'}
+      aria-label={loading ? 'Logging in with Google...' : 'Continue with Google'}
     >
       <FcGoogle className={`icon ${loading ? 'loading' : ''}`} />
       {loading ? <span className="spinner"></span> : 'Login with Google'}

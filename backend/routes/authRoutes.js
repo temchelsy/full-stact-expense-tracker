@@ -20,8 +20,13 @@ const router = express.Router();
 
 // Function to create a JWT for authenticated users
 const createJWT = (id) => {
-  return jwt.sign({ userId: id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+  return jwt.sign(
+    { userId: id },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN } 
+  );
 };
+
 
 // Authentication routes
 router.post("/register", register);
