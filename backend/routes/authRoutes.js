@@ -25,6 +25,9 @@ router.post('/reset-password', resetPassword);
 router.get('/current', authenticateUser, getCurrentUser);
 
 // Google OAuth login route
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// Google OAuth callback route
 router.get(
   '/google/callback',
   passport.authenticate('google', {
@@ -72,6 +75,5 @@ router.get(
     }
   }
 );
-
 
 export default router;
