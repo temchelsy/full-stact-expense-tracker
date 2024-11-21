@@ -1,53 +1,60 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import dotenv from 'dotenv';
 import User from '../models/user.js';
+
+dotenv.config();
 
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: 'https://full-stact-expense-tracker.onrender.com/api/v1/google/callback', // Make sure this matches your API URL
+      clientID: process.env.GOOGLE_CLIENT_ID, // Make sure this is correct
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET, // Make sure this is correct
+      callbackURL: 'https://full-stact-expense-tracker.onrender.com/api/v1/google/callback', // Ensure this is the same as in your Google Developer Console
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Check if the user already exists in the database
+        console.log('Google Profile:', profile);
+
+        // Extract fields with fallbacks
+        const firstName = profile.name?.givenName || 'Unknown';
+        const lastName = profile.name?.familyName || 'Unknown';
+        const email = profile.emails?.[0]?.value;
+
+        if (!email) {
+          console.error('Google profile is missing email:', profile);
+          return done(new Error('Google login failed: No email provided by Google.'));
+        }
+
+        // Find user by Google ID
         let user = await User.findOne({ googleId: profile.id });
 
         if (!user) {
-          // If user doesn't exist, create a new user with Google profile data
-          user = new User({
-            googleId: profile.id,
-            firstName: profile.name.givenName,
-            lastName: profile.name.familyName,
-            email: profile.emails[0].value,
-            photo: profile.photos[0].value,  // You can save the profile picture as well if needed
-          });
+          // If user doesn't exist by Google ID, check by email
+          user = await User.findOne({ email });
 
-          // Save the new user
-          await user.save();
+          if (!user) {
+            // Create new user if no match is found
+            user = await User.create({
+              googleId: profile.id,
+              firstName,
+              lastName,
+              email,
+            });
+          } else {
+            // Update existing user's Google ID if it was missing
+            user.googleId = profile.id;
+            await user.save();
+          }
         }
 
-        // Pass the user object to the next middleware (done function)
         return done(null, user);
       } catch (error) {
-        console.error('Error in Google OAuth:', error);
+        console.error('Error in Google Strategy:', error);
         return done(error, null);
       }
     }
   )
 );
 
-// Store the user in session (if using sessions), or just pass the user to the JWT strategy
-passport.serializeUser((user, done) => {
-  done(null, user._id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findById(id);
-    done(null, user);
-  } catch (error) {
-    done(error);
-  }
-});
+export default passport;
