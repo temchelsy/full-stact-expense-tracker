@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/user.js"; // Adjust path as needed
 import dotenv from "dotenv";
+import { BACK_END_URL } from "../constants/constants.js";
 
 dotenv.config();
 
@@ -12,7 +13,7 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL:
         process.env.GOOGLE_CALLBACK_URL ||
-        "https://full-stact-expense-tracker.onrender.com/api/v1/google/callback",
+        `${BACK_END_URL}/api/v1/google/callback`, 
       passReqToCallback: true,
       scope: ["profile", "email"],
     },
@@ -44,7 +45,6 @@ passport.use(
             email,
           });
         } else {
-          // Update existing user's Google ID if it was missing
           if (!user.googleId) {
             user.googleId = profile.id;
             await user.save();
