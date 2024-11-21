@@ -1,13 +1,11 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import User from '../models/user.js'; // Ensure User is imported
-import authenticateUser from '../middleware/authMiddleware.js'; 
-import { getCurrentUser, register, login, forgotPassword, resetPassword } from '../controllers/authController.js';
+import jwt from 'jsonwebtoken';
+import User from '../models/user.js';
 
 const router = express.Router();
 
-// Function to create a JWT for authenticated user
+// JWT Creation Function
 const createJWT = (id) => {
   return jwt.sign(
     { userId: id },
@@ -16,24 +14,20 @@ const createJWT = (id) => {
   );
 };
 
-// Authentication routes
-router.post('/register', register);
-router.post('/login', login);
-router.post('/forgot-password', forgotPassword);
-router.post('/reset-password', resetPassword);
+// Google OAuth Routes
+router.get(
+  '/google', 
+  passport.authenticate('google', { 
+    scope: ['profile', 'email'] 
+  })
+);
 
-// Route to get the current authenticated user
-router.get('/current', authenticateUser, getCurrentUser);
-
-// Google OAuth login route
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-// Google OAuth callback route
+// Google OAuth Callback
 router.get(
   '/google/callback',
   passport.authenticate('google', {
-    session: false, // No session will be used, as we are generating a JWT
-    failureRedirect: '/login', // Redirect to login if authentication fails
+    session: false,
+    failureRedirect: '/login',
   }),
   async (req, res) => {
     try {
@@ -44,39 +38,19 @@ router.get(
         });
       }
 
-      // Fix: Access Google profile fields with snake_case
-      const firstName = req.user.given_name || 'Unknown'; // Correctly access the given_name property
-      const lastName = req.user.family_name || 'Unknown'; // Correctly access the family_name property
-      const email = req.user.email;
-
-      // Check if the user exists, or create a new one if they don't
-      let user = await User.findOne({ googleId: req.user.sub }); // Use 'sub' as Google user ID
-
-      if (!user) {
-        user = new User({
-          googleId: req.user.sub,
-          firstName,
-          lastName,
-          email,
-        });
-
-        // Save the new user to the database
-        await user.save();
-      }
-
       // Generate JWT token
-      const token = createJWT(user._id);
+      const token = createJWT(req.user._id);
 
-      console.log("Generated Google OAuth Token:", token);  // <-- Check if token is generated
+      console.log("Generated Google OAuth Token:", token);
 
-      // Redirect to frontend with the token
-      const frontendRedirectURL = `https://full-stact-expense-tracker.vercel.app/oauth-callback?token=${token}`;
+      // Frontend Redirect with Token
+      const frontendRedirectURL = `${process.env.FRONTEND_URL || 'https://full-stact-expense-tracker.vercel.app'}/oauth-callback?token=${token}`;
       res.redirect(frontendRedirectURL);
     } catch (error) {
-      console.error('Error during Google OAuth callback:', error);
-      return res.status(500).json({
+      console.error('Google OAuth Callback Error:', error);
+      res.status(500).json({
         status: 'failed',
-        message: 'Internal server error.',
+        message: 'Internal server error',
       });
     }
   }
