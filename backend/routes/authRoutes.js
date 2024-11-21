@@ -24,7 +24,7 @@ router.post('/reset-password', resetPassword);
 // Route to get the current authenticated user
 router.get('/current', authenticateUser, getCurrentUser);
 
-// Route to start Google OAuth flow
+// Google OAuth login route
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 // Google OAuth callback route
@@ -47,7 +47,7 @@ router.get(
     const token = createJWT(req.user._id);
 
     // Redirect to frontend with the token
-    const frontendRedirectURL = `https://full-stact-expense-tracker.vercel.app?token=${token}`;
+    const frontendRedirectURL = `https://full-stact-expense-tracker.vercel.app/oauth-callback?token=${token}`;
     res.redirect(frontendRedirectURL);
   }
 );
