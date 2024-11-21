@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import User from '../models/user.js'; 
+import User from '../models/user.js'; // Ensure User is imported
 import authenticateUser from '../middleware/authMiddleware.js'; 
 import { getCurrentUser, register, login, forgotPassword, resetPassword } from '../controllers/authController.js';
 
@@ -44,15 +44,20 @@ router.get(
         });
       }
 
+      // Fix: Access Google profile fields with snake_case
+      const firstName = req.user.given_name || 'Unknown'; // Correctly access the given_name property
+      const lastName = req.user.family_name || 'Unknown'; // Correctly access the family_name property
+      const email = req.user.email;
+
       // Check if the user exists, or create a new one if they don't
-      let user = await User.findOne({ googleId: req.user.id });
+      let user = await User.findOne({ googleId: req.user.sub }); // Use 'sub' as Google user ID
 
       if (!user) {
         user = new User({
-          googleId: req.user.id,
-          firstName: req.user.name.givenName,
-          lastName: req.user.name.familyName,
-          email: req.user.emails[0].value,
+          googleId: req.user.sub,
+          firstName,
+          lastName,
+          email,
         });
 
         // Save the new user to the database
@@ -62,7 +67,7 @@ router.get(
       // Generate JWT token
       const token = createJWT(user._id);
 
-      console.log("Generated Google OAuth Token:", token);  // <-- Add this line to check if token is generated
+      console.log("Generated Google OAuth Token:", token);  // <-- Check if token is generated
 
       // Redirect to frontend with the token
       const frontendRedirectURL = `https://full-stact-expense-tracker.vercel.app/oauth-callback?token=${token}`;
