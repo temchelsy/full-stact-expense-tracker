@@ -46,7 +46,7 @@ router.get(
     // Generate JWT token
     const token = createJWT(req.user._id);
 
-    // Redirect to frontend with the token
+    // Redirect to frontend with the token in query parameter
     const frontendRedirectURL = `https://full-stact-expense-tracker.vercel.app/oauth-callback?token=${token}`;
     res.redirect(frontendRedirectURL);
   }
