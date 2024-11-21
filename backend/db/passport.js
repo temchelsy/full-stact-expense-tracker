@@ -16,23 +16,32 @@ passport.use(
       try {
         console.log('Google Profile:', profile);
 
-        
+        // Extract fields with fallbacks
+        const firstName = profile.name?.givenName || 'Unknown';
+        const lastName = profile.name?.familyName || 'Unknown';
+        const email = profile.emails?.[0]?.value;
+
+        if (!email) {
+          throw new Error('Google profile does not include an email.');
+        }
+
+        // Find user by Google ID
         let user = await User.findOne({ googleId: profile.id });
 
         if (!user) {
-          
-          user = await User.findOne({ email: profile.emails[0].value });
+          // If user doesn't exist by Google ID, check by email
+          user = await User.findOne({ email });
 
           if (!user) {
-            
+            // Create new user if no match is found
             user = await User.create({
               googleId: profile.id,
-              firstName: profile.name.givenName,
-              lastName: profile.name.familyName,
-              email: profile.emails[0].value,
+              firstName,
+              lastName,
+              email,
             });
           } else {
-            // If user exists by email but doesn't have Google ID, update the Google ID
+            // Update existing user's Google ID if it was missing
             user.googleId = profile.id;
             await user.save();
           }
