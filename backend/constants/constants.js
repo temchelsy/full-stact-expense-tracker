@@ -13,6 +13,9 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
 const FRONT_END_URL =
   process.env.FRONTEND_URL || "https://full-stact-expense-tracker.vercel.app";
 
+// BE
+const BACK_END_URL = process.env.API_BASE_URL;
+
 export {
   MONGO_URL,
   PORT,
@@ -23,4 +26,7 @@ export {
 
   // FE
   FRONT_END_URL,
+
+  // BE
+  BACK_END_URL,
 };
