@@ -22,7 +22,8 @@ passport.use(
         const email = profile.emails?.[0]?.value;
 
         if (!email) {
-          throw new Error('Google profile does not include an email.');
+          console.error('Google profile is missing email:', profile);
+          throw new Error('Google login failed: No email provided by Google.');
         }
 
         // Find user by Google ID
@@ -55,3 +56,5 @@ passport.use(
     }
   )
 );
+
+export default passport;
