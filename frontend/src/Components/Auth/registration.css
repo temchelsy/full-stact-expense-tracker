@@ -127,12 +127,11 @@ button:hover {
 }
 
 .password-container input {
-    width: calc(100% - 30px); /* Account for the space occupied by the icon */
-    padding-right: 50px; /* Creates space for the eye icon */
-    padding-left: 20px; /* Padding on the left for visual consistency */
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
     border-radius: 4px;
     border: 1px solid #ccc;
-    height: 40px; /* Maintain consistent input height */
 }
 
 .password-container input:focus {
@@ -143,7 +142,7 @@ button:hover {
 /* Eye Icon Styling */
 .eye-icon {
     position: absolute;
-    right: 27px; 
+    right: 1px; 
     top: 40%; 
     transform: translateY(-50%); 
     cursor: pointer;
