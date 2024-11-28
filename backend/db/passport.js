@@ -12,8 +12,7 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL:
-        process.env.GOOGLE_CALLBACK_URL ||
-        `${BACK_END_URL}/api/v1/google/callback`, 
+        `https://full-stact-expense-tracker.onrender.com/api/v1/google/callback`, 
       passReqToCallback: true,
       scope: ["profile", "email"],
     },
