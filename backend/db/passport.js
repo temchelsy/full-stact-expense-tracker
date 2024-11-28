@@ -31,7 +31,7 @@ passport.use(
           return done(new Error("Google login failed: No email provided"));
         }
 
-        // Find user by Google ID or email
+        
         let user = await User.findOne({
           $or: [{ googleId: profile.id }, { email: email }],
         });
