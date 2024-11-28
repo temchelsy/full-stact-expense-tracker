@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import User from "../models/user.js"; // Adjust path as needed
+import User from "../models/user.js"; 
 import dotenv from "dotenv";
 import { BACK_END_URL } from "../constants/constants.js";
 

@@ -12,9 +12,9 @@ export const sendEmail = async (to, subject, text) => {
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to,  // Recipient email
-    subject,  // Subject of the email
-    text,  // Email body content
+    to,  
+    subject,  
+    text,  
   };
 
   try {

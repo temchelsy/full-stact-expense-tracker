@@ -9,7 +9,6 @@ import GoogleAuth from './GoogleAuth';
 export const Login = ({ onAuthenticate, onFormSwitch }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [rememberMe, setRememberMe] = useState(false);
     const [isFormLoading, setIsFormLoading] = useState(false); // Form loading state
     const [isGoogleLoading, setIsGoogleLoading] = useState(false); // Google login loading state
     const [showPassword, setShowPassword] = useState(false); 
@@ -41,11 +40,8 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                     toast.success('Login successful!');
                     localStorage.setItem('token', data.token);
 
-                    if (rememberMe) {
-                        localStorage.setItem('email', email);
-                    } else {
-                        localStorage.removeItem('email');
-                    }
+                    // Optionally handle email storage for logged-in users
+                    localStorage.setItem('email', email);
 
                     onAuthenticate(true, '/');
                 } else {
@@ -99,15 +95,6 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                         >
                             {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
                         </span>
-                    </div>
-                    <div className="remember-me">
-                        <input
-                            type="checkbox"
-                            id="rememberMe"
-                            checked={rememberMe}
-                            onChange={() => setRememberMe(!rememberMe)}
-                        />
-                        <label htmlFor="rememberMe">Remember Me</label>
                     </div>
                     <button type="submit" disabled={isFormLoading || isGoogleLoading}>
                         {isFormLoading ? 'Logging in...' : 'Log In'}
