@@ -6,7 +6,6 @@ const OauthCallback = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -16,38 +15,33 @@ const OauthCallback = () => {
       try {
         // Save token for authentication
         localStorage.setItem('authToken', token);
-  
-        // Show success message and redirect
+
+        // Show success message
         toast.success('Login Successful');
-        navigate('/dashboard'); // Redirect to dashboard
+        
+        // Redirect to dashboard
+        setLoading(false);
+        navigate('/dashboard');
       } catch (err) {
         console.error('Token processing error:', err);
         toast.error('Authentication failed. Please try again.');
-        navigate('/login'); // Redirect to login on error
+        setLoading(false);
+        navigate('/login');
       }
     } else {
       toast.error('Authentication failed: No token found');
+      setLoading(false);
       navigate('/login'); // Redirect to login if no token
     }
   }, [location, navigate]);
-  
 
-  // Optional: More informative loading state
+  // Show loading state while processing
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="spinner-border" role="status">
           <span>Authenticating...</span>
         </div>
-      </div>
-    );
-  }
-
-  
-  if (error) {
-    return (
-      <div className="flex justify-center items-center h-screen text-red-500">
-        {error}
       </div>
     );
   }
