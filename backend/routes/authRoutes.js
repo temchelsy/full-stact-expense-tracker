@@ -66,9 +66,9 @@ router.get(
 
       console.log("Generated Google OAuth Token:", token);
 
-      // Frontend Redirect
-      const frontendRedirectURL = `${FRONT_END_URL}/oauth-callback?token=${token}`;
-      res.redirect(frontendRedirectURL);
+const frontendRedirectURL = `${FRONT_END_URL}/oauth-callback?token=${token}`;
+res.redirect(frontendRedirectURL);
+
     } catch (error) {
       console.error("Google OAuth Callback Error:", error);
       res.status(500).json({
