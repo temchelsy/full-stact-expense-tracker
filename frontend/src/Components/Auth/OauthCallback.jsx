@@ -11,36 +11,26 @@ const OauthCallback = () => {
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const token = queryParams.get('token');
-
+  
     if (token) {
       try {
-        // Optional: Validate token structure
-        const tokenParts = token.split('.');
-        if (tokenParts.length !== 3) {
-          throw new Error('Invalid token format');
-        }
-
-        sessionStorage.setItem('authToken', token);
-        toast.success('Login Successful'); // Optional toast notification
-        setLoading(false);
-        navigate('/dashboard');
+        // Save token for authentication
+        localStorage.setItem('authToken', token);
+  
+        // Show success message and redirect
+        toast.success('Login Successful');
+        navigate('/dashboard'); // Redirect to dashboard
       } catch (err) {
-        console.error('Token validation error:', err);
-        setError('Authentication failed: Invalid token');
-        toast.error('Login Failed'); // Optional toast notification
-        navigate('/login', { 
-          state: { error: 'Invalid authentication token' } 
-        });
+        console.error('Token processing error:', err);
+        toast.error('Authentication failed. Please try again.');
+        navigate('/login'); // Redirect to login on error
       }
     } else {
-      setLoading(false);
-      setError('Authentication failed: No token found');
-      toast.error('Login Failed'); // Optional toast notification
-      navigate('/login', { 
-        state: { error: 'No authentication token received' } 
-      });
+      toast.error('Authentication failed: No token found');
+      navigate('/login'); // Redirect to login if no token
     }
   }, [location, navigate]);
+  
 
   // Optional: More informative loading state
   if (loading) {
