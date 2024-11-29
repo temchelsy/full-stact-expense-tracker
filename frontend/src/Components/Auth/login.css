@@ -222,3 +222,27 @@ button:focus {
 .forgot-password:hover {
     color: #0300c7;
 }
+
+.spinner {
+    display: flex;
+    align-items: center;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid transparent;
+    border-top: 3px solid #ffffff; /* Spinner color */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto; /* Centering within the button */
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
