@@ -66,7 +66,7 @@ router.get(
 
       console.log("Generated Google OAuth Token:", token);
 
-const frontendRedirectURL = `${FRONT_END_URL}/oauth-callback?token=${token}`;
+const frontendRedirectURL = `https://full-stact-expense-tracker.vercel.app/oauth-callback?token=${token}`;
 res.redirect(frontendRedirectURL);
 
     } catch (error) {
