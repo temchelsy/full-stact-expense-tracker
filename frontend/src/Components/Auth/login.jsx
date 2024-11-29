@@ -77,6 +77,7 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                         id="email"
                         name="email"
                         required
+                        disabled={isFormLoading || isGoogleLoading} // Disable input during loading
                     />
                     <label htmlFor="password">Password</label>
                     <div className="password-container">
@@ -88,6 +89,7 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                             id="password"
                             name="password"
                             required
+                            disabled={isFormLoading || isGoogleLoading} // Disable input during loading
                         />
                         <span
                             className="eye-icon"
@@ -97,7 +99,11 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                         </span>
                     </div>
                     <button type="submit" disabled={isFormLoading || isGoogleLoading}>
-                        {isFormLoading ? 'Logging in...' : 'Log In'}
+                        {isFormLoading ? (
+                            <div className="spinner"></div> // Spinner element
+                        ) : (
+                            'Log In'
+                        )}
                     </button>
                 </form>
                 <button className="link-btn" onClick={() => onFormSwitch('register')}>

@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
+
 const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -11,6 +12,7 @@ const ResetPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // Loading state
   const { token } = useParams(); 
   const navigate = useNavigate();
 
@@ -21,14 +23,20 @@ const ResetPassword = () => {
       return;
     }
 
+    setLoading(true); // Start loading
     try {
-      const response = await axios.post('https://full-stact-expense-tracker.onrender.com/api/v1/reset-password', { token, newPassword });
+      const response = await axios.post(
+        'https://full-stact-expense-tracker.onrender.com/api/v1/reset-password',
+        { token, newPassword }
+      );
       setMessage(response.data.message);
       setError('');
       setTimeout(() => navigate('/login'), 3000); 
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong');
       setMessage('');
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -46,6 +54,7 @@ const ResetPassword = () => {
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="New Password"
               required
+              disabled={loading} // Disable input during loading
             />
             <span onClick={() => setShowNewPassword(!showNewPassword)} className="eye-icon">
               {showNewPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
@@ -60,12 +69,15 @@ const ResetPassword = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm New Password"
               required
+              disabled={loading} // Disable input during loading
             />
             <span onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="eye-icon">
-              {showConfirmPassword ? <VisibilityIcon /> : < VisibilityOffIcon/>}
+              {showConfirmPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
             </span>
           </div>
-          <button type="submit">Reset Password</button>
+          <button type="submit" disabled={loading}>
+            {loading ? <div className="spinner"></div> : 'Reset Password'}
+          </button>
         </form>
         {message && <p className="success-message">{message}</p>}
         {error && <p className="error-message">{error}</p>}
