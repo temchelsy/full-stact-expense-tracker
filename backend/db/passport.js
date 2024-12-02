@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import User from "../models/user.js"; 
+import User from "../models/user.js";
 import dotenv from "dotenv";
 import { BACK_END_URL } from "../constants/constants.js";
 
@@ -11,8 +11,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL:
-        `https://full-stact-expense-tracker.onrender.com/api/v1/google/callback`, 
+      callbackURL: `https://full-stact-expense-tracker.onrender.com/api/v1/google/callback`,
       passReqToCallback: true,
       scope: ["profile", "email"],
     },
@@ -30,7 +29,6 @@ passport.use(
           return done(new Error("Google login failed: No email provided"));
         }
 
-        
         let user = await User.findOne({
           $or: [{ googleId: profile.id }, { email: email }],
         });

@@ -1,128 +1,121 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { MainLayout } from './styles/Layouts';
-import { Toaster } from 'sonner';
-import Navigation from './Components/Navigation/Navigation';
-import Dashboard from './Components/Dashboard/Dashboard';
-import Income from './Components/Income/Income';
-import Expenses from './Components/Expenses/Expenses';
-import TransactionView from './Components/transaction';
-import { useGlobalContext } from './context/globalContext';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import Authentification from './Components/Auth/auth';
-import ForgotPassword from './Components/Auth/ForgotPassword';
-import ResetPassword from './Components/Auth/ResetPassword';
-import OauthCallback from './Components/Auth/OauthCallback';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { MainLayout } from "./styles/Layouts";
+import { Toaster } from "sonner";
+import Navigation from "./Components/Navigation/Navigation";
+import Dashboard from "./Components/Dashboard/Dashboard";
+import Income from "./Components/Income/Income";
+import Expenses from "./Components/Expenses/Expenses";
+import TransactionView from "./Components/transaction";
+import { useGlobalContext } from "./context/globalContext";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import Authentification from "./Components/Auth/auth";
+import ForgotPassword from "./Components/Auth/ForgotPassword";
+import ResetPassword from "./Components/Auth/ResetPassword";
+import OauthCallback from "./Components/Auth/OauthCallback";
 
 function App() {
-    const [active, setActive] = useState(1);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const navigate = useNavigate();
+  const [active, setActive] = useState(1);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
 
-    const global = useGlobalContext();
+  const global = useGlobalContext();
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        setIsAuthenticated(!!token);
-    }, []);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsAuthenticated(!!token);
+  }, []);
 
-    const handleAuthentication = (authStatus, redirectPath = '/') => {
-        setIsAuthenticated(authStatus);
-        if (authStatus) {
-            navigate(redirectPath);
-        }
-    };
+  const handleAuthentication = (authStatus, redirectPath = "/") => {
+    setIsAuthenticated(authStatus);
+    if (authStatus) {
+      navigate(redirectPath);
+    }
+  };
 
-    return (
-        <AppStyled className="App">
-            <Toaster richColors />
-            <MainLayout>
-                {isAuthenticated ? (
-                    <>
-                        <Navigation active={active} setActive={setActive} />
-                        <main>
-                            <Routes>
-                                <Route path="/" element={<Dashboard />} />
-                                <Route path="/income" element={<Income />} />
-                                <Route path="/expenses" element={<Expenses />} />
-                                <Route path="/transactions" element={<TransactionView />} />
-                                <Route path="*" element={<Navigate to="/" />} />
-                            </Routes>
-                        </main>
-                    </>
-                ) : (
-                    <Routes>
-                        <Route 
-                            path="/login" 
-                            element={<Authentification onAuthenticate={handleAuthentication} />} 
-                        />
-                        <Route 
-                            path="/forgot-password" 
-                            element={<ForgotPassword />} 
-                        />
+  return (
+    <AppStyled className="App">
+      <Toaster richColors />
+      <MainLayout>
+        {isAuthenticated ? (
+          <>
+            <Navigation active={active} setActive={setActive} />
+            <main>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/income" element={<Income />} />
+                <Route path="/expenses" element={<Expenses />} />
+                <Route path="/transactions" element={<TransactionView />} />
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
+            </main>
+          </>
+        ) : (
+          <Routes>
+            <Route
+              path="/login"
+              element={
+                <Authentification onAuthenticate={handleAuthentication} />
+              }
+            />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
 
-<Route path="/auth/callback" element={<OauthCallback />} />
-                     
-                        <Route 
-                            path="/reset-password/:token" 
-                            element={<ResetPassword />} 
-                        />
-                        <Route 
-                            path="*" 
-                            element={<Navigate to="/login" />} 
-                        />
-                    </Routes>
-                )}
-            </MainLayout>
-        </AppStyled>
-    );
+            <Route path="/oauth-callback" element={<OauthCallback />} />
+
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Routes>
+        )}
+      </MainLayout>
+    </AppStyled>
+  );
 }
 
 const AppStyled = styled.div`
-    height: 100vh;
+  height: 100vh;
 
-    main {
+  main {
+    flex: 1;
+    background: rgba(252, 246, 249, 0.78);
+    border: 3px solid #ffffff;
+    backdrop-filter: blur(4.5px);
+    border-radius: 32px;
+    overflow-x: hidden;
+
+    &::-webkit-scrollbar {
+      width: 0;
+    }
+  }
+
+  nav {
+    padding: 1rem;
+
+    ul {
+      display: flex;
+      justify-content: space-around;
+      list-style-type: none;
+      flex-wrap: wrap;
+
+      li {
         flex: 1;
-        background: rgba(252, 246, 249, 0.78);
-        border: 3px solid #FFFFFF;
-        backdrop-filter: blur(4.5px);
-        border-radius: 32px;
-        overflow-x: hidden;
+        cursor: pointer;
 
-        &::-webkit-scrollbar {
-            width: 0;
+        @media (max-width: 768px) {
+          flex: 0 0 100%;
+          text-align: center;
         }
-    }
 
-    nav {
-        padding: 1rem;
+        padding: 0.5rem 1rem;
+        color: #222260;
+        font-weight: 500;
+        transition: color 0.3s;
 
-        ul {
-            display: flex;
-            justify-content: space-around;
-            list-style-type: none;
-            flex-wrap: wrap;
-
-            li {
-                flex: 1;
-                cursor: pointer;
-
-                @media (max-width: 768px) {
-                    flex: 0 0 100%;
-                    text-align: center;
-                }
-
-                padding: 0.5rem 1rem;
-                color: #222260;
-                font-weight: 500;
-                transition: color 0.3s;
-
-                &:hover {
-                    color: #007bff;
-                }
-            }
+        &:hover {
+          color: #007bff;
         }
+      }
     }
+  }
 `;
 
 export default App;

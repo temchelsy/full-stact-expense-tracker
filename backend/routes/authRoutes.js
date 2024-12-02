@@ -1,7 +1,7 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import passport from "passport";
-import User from "../models/user.js"; // Ensure User is imported
+import User from "../models/user.js";
 import authenticateUser from "../middleware/authMiddleware.js";
 import {
   JWT_SECRET,
@@ -20,13 +20,10 @@ const router = express.Router();
 
 // Function to create a JWT for authenticated users
 const createJWT = (id) => {
-  return jwt.sign(
-    { userId: id },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN } 
-  );
+  return jwt.sign({ userId: id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
 };
-
 
 // Authentication routes
 router.post("/register", register);
@@ -66,9 +63,8 @@ router.get(
 
       console.log("Generated Google OAuth Token:", token);
 
-const frontendRedirectURL = `https://full-stact-expense-tracker.vercel.app/oauth-callback?token=${token}`;
-res.redirect(frontendRedirectURL);
-
+      const frontendRedirectURL = `${FRONT_END_URL}/oauth-callback?token=${token}`;
+      res.redirect(frontendRedirectURL);
     } catch (error) {
       console.error("Google OAuth Callback Error:", error);
       res.status(500).json({
@@ -79,5 +75,4 @@ res.redirect(frontendRedirectURL);
   }
 );
 
-// Export the router
 export default router;
