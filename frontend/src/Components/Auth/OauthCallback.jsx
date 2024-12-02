@@ -20,7 +20,7 @@ const OauthCallback = () => {
         toast.success("Login Successful");
 
         // Redirect to dashboard
-        navigate("/dashboard");
+        navigate("/");
       } catch (err) {
         console.error("Token processing error:", err);
         toast.error("Authentication failed. Please try again.");
