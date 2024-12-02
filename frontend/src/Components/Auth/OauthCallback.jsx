@@ -20,18 +20,19 @@ const OauthCallback = () => {
         toast.success("Login Successful");
 
         // Redirect to dashboard
-        setLoading(false);
         navigate("/dashboard");
       } catch (err) {
         console.error("Token processing error:", err);
         toast.error("Authentication failed. Please try again.");
-        setLoading(false);
         navigate("/login");
+      } finally {
+        setLoading(false);
       }
     } else {
       toast.error("Authentication failed: No token found");
-      setLoading(false);
+      console.log('auth failed');
       navigate("/login"); // Redirect to login if no token
+      setLoading(false);
     }
   }, [location, navigate]);
 
