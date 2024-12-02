@@ -39,11 +39,8 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
                 if (data.token) {
                     toast.success('Login successful!');
                     localStorage.setItem('token', data.token);
-
-                    // Optionally handle email storage for logged-in users
                     localStorage.setItem('email', email);
-
-                    onAuthenticate(true, '/');
+                    onAuthenticate(true, '/dashboard'); // Redirect to dashboard
                 } else {
                     toast.error('Login successful, but no token received.');
                 }
@@ -62,7 +59,6 @@ export const Login = ({ onAuthenticate, onFormSwitch }) => {
         setIsGoogleLoading(true);
         window.location.href = 'https://full-stact-expense-tracker.onrender.com/api/v1/google';
     };
-
     return (
         <div className="background-container">
             <div className="form-container">

@@ -59,9 +59,7 @@ function App() {
               }
             />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-
-            <Route path="/oauth-callback" element={<OauthCallback />} />
-
+            <Route path="/oauth-callback" element={<OauthCallback onAuthenticate={handleAuthentication} />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
