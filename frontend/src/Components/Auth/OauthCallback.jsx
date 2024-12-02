@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 
-const OauthCallback = () => {
+const OauthCallback = ({ onAuthenticate }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -14,13 +14,13 @@ const OauthCallback = () => {
     if (token) {
       try {
         // Save token for authentication
-        localStorage.setItem("authToken", token);
+        localStorage.setItem("token", token);
 
         // Show success message
         toast.success("Login Successful");
 
-        // Redirect to dashboard
-        navigate("/");
+         
+        onAuthenticate(true, "/dashboard");
       } catch (err) {
         console.error("Token processing error:", err);
         toast.error("Authentication failed. Please try again.");
@@ -34,7 +34,7 @@ const OauthCallback = () => {
       navigate("/login"); // Redirect to login if no token
       setLoading(false);
     }
-  }, [location, navigate]);
+  }, [location, navigate, onAuthenticate]);
 
   // Show loading state while processing
   if (loading) {
