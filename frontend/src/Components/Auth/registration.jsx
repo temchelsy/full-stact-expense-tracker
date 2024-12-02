@@ -3,6 +3,7 @@ import './registration.css';
 import { toast } from "sonner";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import GoogleAuth from './GoogleAuth';  // Import GoogleAuth component
 
 export const Registration = ({ onAuthenticate, onFormSwitch }) => {
     const [email, setEmail] = useState('');
@@ -13,6 +14,7 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isGoogleLoading, setIsGoogleLoading] = useState(false); // Google login loading state
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -94,6 +96,11 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
         }
     };
 
+    const handleGoogleLogin = () => {
+        setIsGoogleLoading(true); // Start loader for Google login
+        window.location.href = 'https://full-stact-expense-tracker.onrender.com/api/v1/google';
+    };
+
     return (
         <div className="background-container">
             <div className="form-container">
@@ -128,6 +135,7 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
                         id="email"
                         name="email"
                         required
+                        disabled={isLoading || isGoogleLoading} // Disable during loading
                     />
                     <label htmlFor="password">Password</label>
                     <div className="password-container">
@@ -139,6 +147,7 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
                             id="password"
                             name="password"
                             required
+                            disabled={isLoading || isGoogleLoading} // Disable during loading
                         />
                         <span
                             className="eye-icon"
@@ -157,22 +166,31 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
                             id="confirmPassword"
                             name="confirmPassword"
                             required
+                            disabled={isLoading || isGoogleLoading} // Disable during loading
                         />
                         <span
                             className="eye-icon"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
-                            {showConfirmPassword ? <VisibilityIcon  /> : <VisibilityOffIcon/>}
+                            {showConfirmPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
                         </span>
                     </div>
-                    <button type="submit" disabled={isLoading}>
-                        {isLoading ? 'Registering...' : 'Register'}
+                    <button type="submit" disabled={isLoading || isGoogleLoading}>
+                        {isLoading ? (
+                            <div className="spinner"></div> // Spinner for form submission
+                        ) : (
+                            'Register'
+                        )}
                     </button>
                     {isLoading && <div className="loader"></div>}
                 </form>
                 <button className="link-btn" onClick={() => onFormSwitch('login')}>
                     Already have an account? Login here.
                 </button>
+
+                {/* Google Auth Button */}
+                <GoogleAuth loading={isGoogleLoading} onClick={handleGoogleLogin} />
+                {isGoogleLoading && <div className="spinner"></div>} {/* Loader for Google login */}
             </div>
         </div>
     );
