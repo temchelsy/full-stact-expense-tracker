@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-
+import React, { useState } from "react";
+import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const ResetPassword = () => {
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // Loading state
-  const { token } = useParams(); 
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); 
+  const { token } = useParams();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -23,20 +22,20 @@ const ResetPassword = () => {
       return;
     }
 
-    setLoading(true); // Start loading
+    setLoading(true); 
     try {
       const response = await axios.post(
-        'https://full-stact-expense-tracker.onrender.com/api/v1/reset-password',
+        "https://full-stact-expense-tracker.onrender.com/api/v1/reset-password",
         { token, newPassword }
       );
       setMessage(response.data.message);
-      setError('');
-      setTimeout(() => navigate('/login'), 3000); 
+      setError("");
+      setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong');
-      setMessage('');
+      setError(err.response?.data?.message || "Something went wrong");
+      setMessage("");
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false); 
     }
   };
 
@@ -49,14 +48,17 @@ const ResetPassword = () => {
           <div className="password-container">
             <input
               id="newPassword"
-              type={showNewPassword ? 'text' : 'password'}
+              type={showNewPassword ? "text" : "password"}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="New Password"
               required
-              disabled={loading} // Disable input during loading
+              disabled={loading} 
             />
-            <span onClick={() => setShowNewPassword(!showNewPassword)} className="eye-icon">
+            <span
+              onClick={() => setShowNewPassword(!showNewPassword)}
+              className="eye-icon"
+            >
               {showNewPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
             </span>
           </div>
@@ -64,19 +66,22 @@ const ResetPassword = () => {
           <div className="password-container">
             <input
               id="confirmPassword"
-              type={showConfirmPassword ? 'text' : 'password'}
+              type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm New Password"
               required
-              disabled={loading} // Disable input during loading
+              disabled={loading} 
             />
-            <span onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="eye-icon">
+            <span
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="eye-icon"
+            >
               {showConfirmPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
             </span>
           </div>
           <button type="submit" disabled={loading}>
-            {loading ? <div className="spinner"></div> : 'Reset Password'}
+            {loading ? <div className="spinner"></div> : "Reset Password"}
           </button>
         </form>
         {message && <p className="success-message">{message}</p>}

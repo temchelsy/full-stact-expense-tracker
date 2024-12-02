@@ -21,7 +21,7 @@
 .register-form label {
     display: block;
     margin-bottom: 8px;
-    font-weight: bold; /* Ensures labels have consistent bold styling */
+    font-weight: bold; 
 }
 
 .register-form input {
@@ -120,10 +120,11 @@ button:hover {
     }
 }
 
-/* Password Input Field Styling */
+
 .password-container {
     position: relative;
-    width: 100%; /* Ensures the container spans the full width */
+    width: 100%; 
+    
 }
 
 .password-container input {
@@ -139,7 +140,7 @@ button:hover {
     box-shadow: 0 0 5px rgba(0, 60, 255, 0.5);
 }
 
-/* Eye Icon Styling */
+
 .eye-icon {
     position: absolute;
     right: 1px; 

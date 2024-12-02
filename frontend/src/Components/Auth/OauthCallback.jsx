@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import toast from 'react-hot-toast'; 
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const OauthCallback = () => {
   const location = useLocation();
@@ -9,29 +9,29 @@ const OauthCallback = () => {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
-    const token = queryParams.get('token');
-  
+    const token = queryParams.get("token");
+
     if (token) {
       try {
         // Save token for authentication
-        localStorage.setItem('authToken', token);
+        localStorage.setItem("authToken", token);
 
         // Show success message
-        toast.success('Login Successful');
-        
+        toast.success("Login Successful");
+
         // Redirect to dashboard
         setLoading(false);
-        navigate('/dashboard');
+        navigate("/dashboard");
       } catch (err) {
-        console.error('Token processing error:', err);
-        toast.error('Authentication failed. Please try again.');
+        console.error("Token processing error:", err);
+        toast.error("Authentication failed. Please try again.");
         setLoading(false);
-        navigate('/login');
+        navigate("/login");
       }
     } else {
-      toast.error('Authentication failed: No token found');
+      toast.error("Authentication failed: No token found");
       setLoading(false);
-      navigate('/login'); // Redirect to login if no token
+      navigate("/login"); // Redirect to login if no token
     }
   }, [location, navigate]);
 
