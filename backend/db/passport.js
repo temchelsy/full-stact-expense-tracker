@@ -20,9 +20,9 @@ passport.use(
         console.log("Google Profile:", JSON.stringify(profile, null, 2));
 
         // Extract fields with fallbacks
-        const firstName = profile.name?.givenName || "Unknown";
-        const lastName = profile.name?.familyName || "Unknown";
-        const email = profile.emails?.[0]?.value;
+        // const firstName = profile.name?.givenName || "Unknown";
+        // const lastName = profile.name?.familyName || "Unknown";
+        // const email = profile.emails?.[0]?.value;
 
         if (!email) {
           console.error("Google profile is missing email:", profile);
