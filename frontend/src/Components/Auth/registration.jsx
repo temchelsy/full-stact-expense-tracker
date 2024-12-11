@@ -190,7 +190,7 @@ export const Registration = ({ onAuthenticate, onFormSwitch }) => {
 
                 {/* Google Auth Button */}
                 <GoogleAuth loading={isGoogleLoading} onClick={handleGoogleLogin} />
-                {isGoogleLoading && <div className="spinner"></div>} {/* Loader for Google login */}
+               
             </div>
         </div>
     );
